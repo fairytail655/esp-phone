@@ -1,6 +1,8 @@
 {
 	"files.associations": {
 		"lvgl.h": "c",
-		"gui_conf.h": "c"
+		"gui_conf.h": "c",
+		"wallpaper.h": "c",
+		"gui.h": "c"
 	}
 }

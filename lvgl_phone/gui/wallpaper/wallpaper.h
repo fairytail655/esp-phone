@@ -9,10 +9,10 @@ extern "C" {
 #endif
 
 typedef struct {
-    void (*show)(lv_obj_t *obj);
+    void (*show)(void);
 } wallpaper_t;
 
-void wallpaper_init(wallpaper_t *wallpaper);
+void wallpaper_init(wallpaper_t *wallpaper, lv_obj_t *parent);
 
 #ifdef __cplusplus
 }
