@@ -9,9 +9,12 @@
 #include "lv_drivers/indev/mouse.h"
 #include "lv_drivers/indev/keyboard.h"
 #include "lv_drivers/indev/mousewheel.h"
+#include "lvgl_phone.h"
 
 static void hal_init(void);
 static int tick_thread(void *data);
+
+gui_t gui;
 
 int main(int argc, char **argv)
 {
@@ -23,6 +26,8 @@ int main(int argc, char **argv)
 
     /*Initialize the HAL (display, input devices, tick) for LVGL*/
     hal_init();
+
+    gui_init(&gui);
 
     while(1) {
         lv_timer_handler();
@@ -107,7 +112,7 @@ static void hal_init(void)
  * @param data unused
  * @return never return
  */
-static int tick_thread(void *data) 
+static int tick_thread(void *data)
 {
     (void)data;
 
