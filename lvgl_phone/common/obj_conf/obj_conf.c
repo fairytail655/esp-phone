@@ -1,4 +1,4 @@
-#include "../gui_conf.h"
+#include "gui/gui_conf.h"
 #include "obj_conf.h"
 
 void obj_conf_style(lv_obj_t *obj, obj_conf_style_t *config)

@@ -1,8 +1,9 @@
-#include "../gui_conf.h"
-#include "../obj_conf/obj_conf.h"
+#include "common/common.h"
 #include "status_icon.h"
 
-void status_icon_init(status_icon_t *icon, uint8_t state_num, lv_obj_t *parent)
+#if STATUSBAR_EN
+
+status_icon_t *status_icon_create(uint8_t state_num, lv_obj_t *parent)
 {
     // Create container
     lv_obj_t *obj = lv_obj_create(parent);
@@ -26,10 +27,23 @@ void status_icon_init(status_icon_t *icon, uint8_t state_num, lv_obj_t *parent)
         lv_obj_add_flag(img[i], LV_OBJ_FLAG_HIDDEN);
     }
 
+    status_icon_t *icon = (status_icon_t *)lv_mem_alloc(sizeof(status_icon_t));
     icon->state_num = state_num;
     icon->current_state = 0;
     icon->_obj = obj;
     icon->_img = img;
+
+    return icon;
+}
+
+void status_icon_destory(status_icon_t *icon)
+{
+    if (icon == NULL)
+        return;
+
+    lv_obj_del(icon->_obj);
+    lv_mem_free(icon->_img);
+    lv_mem_free(icon);
 }
 
 void status_icon_set_src(status_icon_t *icon, uint8_t state_index, const lv_img_dsc_t *src)
@@ -39,18 +53,20 @@ void status_icon_set_src(status_icon_t *icon, uint8_t state_index, const lv_img_
         return;
     }
 
-    lv_img_t *img = icon->_img[state_index];
+    lv_obj_t *img = icon->_img[state_index - 1];
     lv_img_set_src(img, src);
-    // Calculate the multiple of the size between the target and the image.
-    float h_factor = (float)(STATUSBAR_ICON_SIZE) / src->header.h;
-    float w_factor = (float)(STATUSBAR_ICON_SIZE) / src->header.w;
-    // Scale the image to a suitable size.
-    // So you don’t have to consider the size of the source image.
-    if (h_factor < w_factor) {
-        lv_img_set_zoom(img, (int)(h_factor * LV_IMG_ZOOM_NONE));
-    }
-    else {
-        lv_img_set_zoom(img, (int)(w_factor * LV_IMG_ZOOM_NONE));
+    if ((src->header.h != STATUSBAR_ICON_SIZE) && (src->header.w != STATUSBAR_ICON_SIZE)) {
+        // Calculate the multiple of the size between the target and the image.
+        float h_factor = (float)(STATUSBAR_ICON_SIZE) / src->header.h;
+        float w_factor = (float)(STATUSBAR_ICON_SIZE) / src->header.w;
+        // Scale the image to a suitable size.
+        // So you don’t have to consider the size of the source image.
+        if (h_factor < w_factor) {
+            lv_img_set_zoom(img, (int)(h_factor * LV_IMG_ZOOM_NONE));
+        }
+        else {
+            lv_img_set_zoom(img, (int)(w_factor * LV_IMG_ZOOM_NONE));
+        }
     }
 }
 
@@ -64,8 +80,12 @@ void status_icon_set_state(status_icon_t *icon, uint8_t state_index)
     uint8_t current_state = icon->current_state;
     if (current_state != state_index) {
         if (current_state != 0)
-            lv_obj_add_flag(icon->_img[current_state], LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(icon->_img[current_state - 1], LV_OBJ_FLAG_HIDDEN);
         if (state_index != 0)
-            lv_obj_clear_flag(icon->_img[state_index], LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(icon->_img[state_index - 1], LV_OBJ_FLAG_HIDDEN);
     }
+
+    icon->current_state = state_index;
 }
+
+#endif

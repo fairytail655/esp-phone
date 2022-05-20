@@ -10,7 +10,7 @@ extern "C" {
 
 typedef struct {
     wallpaper_t wallpaper;
-#ifdef STATUS_BAR_EN
+#if STATUSBAR_EN
     status_bar_t status_bar;
 #endif
 } gui_t;

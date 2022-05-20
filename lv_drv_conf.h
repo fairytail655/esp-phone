@@ -79,6 +79,11 @@
  *  DISPLAY DRIVERS
  *********************/
 
+/* Hardware accelerated SDL driver */
+#ifndef USE_SDL_GPU
+# define USE_SDL_GPU 0
+#endif
+
 /*-------------------
  *  Monitor of PC
  *-------------------*/
