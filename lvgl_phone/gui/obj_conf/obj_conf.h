@@ -11,15 +11,18 @@ typedef enum {
     OBJ_POS_FLAG_NONE = 0,
     OBJ_POS_FLAG_XY,
     OBJ_POS_FLAG_ALIGN,
+    OBJ_POS_FLAG_ALIGN_OFFSET,
+    OBJ_POS_FLAG_ALIGN_TO,
 } obj_pos_flag_t;
 
 typedef struct {
     uint16_t width;
     uint16_t height;
-    obj_pos_flag_t flag;
+    obj_pos_flag_t pos_flag;
     lv_align_t align;
-    uint16_t x;
-    uint16_t y;
+    lv_obj_t *alignt_to;
+    int16_t x_offset;
+    int16_t y_offset;
     uint16_t radius;
     uint16_t border_width;
     uint16_t padd_all;

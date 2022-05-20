@@ -48,7 +48,7 @@ $(BUILD_DIR)/%.$(OBJ_EXT): $(SRC_DIR)/%.$(SRC_EXT)
 
 default: $(OBJECTS)
 	@mkdir -p $(BIN_DIR)
-	$(CC) -o $(BIN) $(OBJECTS) $(LDFLAGS) ${LDLIBS}
+	@$(CC) -o $(BIN) $(OBJECTS) $(LDFLAGS) ${LDLIBS}
 
 clean:
 	rm -rf $(WORKING_DIR)

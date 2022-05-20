@@ -11,7 +11,7 @@ extern "C" {
 #endif
 
 typedef struct {
-    void (*show)(lv_obj_t *parent);
+    void (*show)(void);
     void (*hide)(void);
 } status_bar_t;
 
