@@ -136,8 +136,8 @@ void status_bar_add_icon(status_bar_area_t area, int id, const lv_img_src_t **st
             return;
     }
     area_icon_count_inc(area);
-    for (int i = 1; i <= state_num; i++) {
-        status_icon_set_src(icon, i, state_src[i-i]);
+    for (int i = 0; i < state_num; i++) {
+        status_icon_set_src(icon, i+1, state_src[i]);
     }
     status_icon_set_state(icon, 1);
 
@@ -168,6 +168,17 @@ void status_bar_del_icon(int id)
     LV_LOG_INFO("status_bar delete icon(id:%d) in the [%s] area", id, _area_str[area]);
 }
 
+void status_bar_set_wifi_state(status_bar_wifi_state_t state)
+{
+    icon_node_t *node = icon_ll_search(ICON_WIFI_ID, NULL);
+    if (node == NULL) {
+        LV_LOG_WARN("wifi icon doesn't exist");
+        return;
+    }
+
+    status_icon_set_state(node->icon, state);
+}
+
 static icon_node_t *icon_ll_search(int id, status_bar_area_t *area)
 {
     icon_node_t *node = _lv_ll_get_tail(&_icon_ll);
@@ -177,7 +188,8 @@ static icon_node_t *icon_ll_search(int id, status_bar_area_t *area)
         node = _lv_ll_get_prev(&_icon_ll, node);
     }
 
-    *area = node->area;
+    if (area != NULL)
+        *area = node->area;
     return node;
 }
 
@@ -256,12 +268,10 @@ static void wifi_icon_init(void)
     LV_IMG_DECLARE(img_wifi_close);
 
     const lv_img_dsc_t *wifi_img[5] = {
-        &img_wifi_1, &img_wifi_2, &img_wifi_3,
-        &img_wifi_close, &img_wifi_disconnect
+        &img_wifi_disconnect, &img_wifi_close,
+        &img_wifi_1, &img_wifi_2, &img_wifi_3
     };
-    for (int i = 0; i < 10; i++) {
-        status_bar_add_icon(STATUS_BAR_AREA_LEFT, i, wifi_img, 5);
-    }
+    status_bar_add_icon(STATUS_BAR_AREA_LEFT, ICON_WIFI_ID, wifi_img, 5);
 
     LV_LOG_TRACE("wifi icon init finished");
 }

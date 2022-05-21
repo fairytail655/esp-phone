@@ -5,7 +5,7 @@
 
 #if STATUSBAR_EN
 
-#include "stdint.h"
+#include <stdint.h>
 #include "lvgl.h"
 
 #ifdef __cplusplus

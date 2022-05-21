@@ -14,6 +14,8 @@
 static void hal_init(void);
 static int tick_thread(void *data);
 
+static void timer_cb(struct _lv_timer_t *);
+
 int main(int argc, char **argv)
 {
     (void)argc; /*Unused*/
@@ -26,6 +28,8 @@ int main(int argc, char **argv)
     hal_init();
 
     gui_init();
+    status_bar_set_wifi_state(STATUS_BAR_WIFI_STATE_1);
+    lv_timer_create(timer_cb, 2000, NULL);
 
     while(1) {
         lv_timer_handler();
@@ -33,6 +37,15 @@ int main(int argc, char **argv)
     }
 
     return 0;
+}
+
+static void timer_cb(struct _lv_timer_t * timer)
+{
+    static status_bar_wifi_state_t i = STATUS_BAR_WIFI_STATE_CLOSE;
+    if (i > STATUS_BAR_WIFI_STATE_3) {
+        i =  STATUS_BAR_WIFI_STATE_CLOSE;
+    }
+    status_bar_set_wifi_state(i++);
 }
 
 /**
