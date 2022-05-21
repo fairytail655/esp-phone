@@ -8,14 +8,7 @@
 extern "C" {
 #endif
 
-typedef struct {
-    wallpaper_t wallpaper;
-#if STATUSBAR_EN
-    status_bar_t status_bar;
-#endif
-} gui_t;
-
-void gui_init(gui_t *gui);
+void gui_init(void);
 
 #ifdef __cplusplus
 }

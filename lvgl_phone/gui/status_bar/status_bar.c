@@ -32,7 +32,7 @@ static uint8_t _area_right_icon_count = 0, _area_right_icon_num_max;
 #endif
 static const char *_area_str[] = {"left", "middle", "right"};
 
-void status_bar_init(status_bar_t *status_bar, lv_obj_t *parent)
+void status_bar_init(lv_obj_t *parent)
 {
     // Main area
     obj_conf_style_t style = {
@@ -105,9 +105,6 @@ void status_bar_init(status_bar_t *status_bar, lv_obj_t *parent)
     // Initialize icons
     _lv_ll_init(&_icon_ll, sizeof(icon_node_t));
     wifi_icon_init();
-
-    status_bar->show = show;
-    status_bar->hide = hide;
 }
 
 void status_bar_add_icon(status_bar_area_t area, int id, const lv_img_src_t **state_src, uint8_t state_num)

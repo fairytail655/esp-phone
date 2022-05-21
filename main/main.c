@@ -14,8 +14,6 @@
 static void hal_init(void);
 static int tick_thread(void *data);
 
-gui_t gui;
-
 int main(int argc, char **argv)
 {
     (void)argc; /*Unused*/
@@ -27,7 +25,7 @@ int main(int argc, char **argv)
     /*Initialize the HAL (display, input devices, tick) for LVGL*/
     hal_init();
 
-    gui_init(&gui);
+    gui_init();
 
     while(1) {
         lv_timer_handler();

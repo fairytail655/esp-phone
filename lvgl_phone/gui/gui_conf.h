@@ -20,9 +20,9 @@
 #define STATUSBAR_AREA_LEFT_PERCENT         30
 #define STATUSBAR_AREA_RIGHT_PERCENT        30
 #define STATUSBAR_AREA_PAD                  3
-#define STATUSBAR_AREA_LEFT_EN              0
+#define STATUSBAR_AREA_LEFT_EN              1
 #define STATUSBAR_AREA_MID_EN               1
-#define STATUSBAR_AREA_RIGHT_EN             0
+#define STATUSBAR_AREA_RIGHT_EN             1
 #else
 #define STATUSBAR_WIDTH                     0
 #define STATUSBAR_HEIGHT                    0

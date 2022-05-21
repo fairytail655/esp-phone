@@ -8,11 +8,7 @@
 extern "C" {
 #endif
 
-typedef struct {
-    void (*show)(void);
-} wallpaper_t;
-
-void wallpaper_init(wallpaper_t *wallpaper, lv_obj_t *parent);
+void wallpaper_init(lv_obj_t *parent);
 
 #ifdef __cplusplus
 }
