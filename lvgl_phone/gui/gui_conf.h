@@ -2,15 +2,13 @@
 #define GUI_CONF_H
 
 #include "lvgl.h"
+#include "../lv_phone_conf.h"
+
 
 #define WALLPAPER_COLOR     lv_color_make(0x4C, 0x58, 0x7B)
 #define WALLPAPER_OPA       LV_OPA_TRANSP
 
 
-#define OBJ_CONF_BORDER_EN
-
-
-#define STATUSBAR_EN                       1
 #if     STATUSBAR_EN
 #define STATUSBAR_WIDTH                     LV_HOR_RES
 #define STATUSBAR_HEIGHT                    34
@@ -20,9 +18,7 @@
 #define STATUSBAR_AREA_LEFT_PERCENT         30
 #define STATUSBAR_AREA_RIGHT_PERCENT        30
 #define STATUSBAR_AREA_PAD                  3
-#define STATUSBAR_AREA_LEFT_EN              1
-#define STATUSBAR_AREA_MID_EN               1
-#define STATUSBAR_AREA_RIGHT_EN             1
+#define STATUSBAR_CLOCK_FONT                &lv_font_montserrat_18
 #else
 #define STATUSBAR_WIDTH                     0
 #define STATUSBAR_HEIGHT                    0

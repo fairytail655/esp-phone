@@ -1,6 +1,7 @@
 #include "common/common.h"
 #include "status_icon.h"
 #include "status_bar.h"
+#include "status_clock.h"
 
 #if STATUSBAR_EN
 
@@ -17,8 +18,6 @@ static void area_icon_count_inc(status_bar_area_t area);
 static void area_icon_count_dec(status_bar_area_t area);
 static bool area_icon_count_check(status_bar_area_t area);
 static void wifi_icon_init(void);
-static void show(void);
-static void hide(void);
 
 static lv_obj_t *_obj;
 static lv_obj_t *_area_left, *_area_right, *_area_middle;
@@ -40,7 +39,7 @@ void status_bar_init(lv_obj_t *parent)
         .height = STATUSBAR_HEIGHT,
         .pos_flag = OBJ_POS_FLAG_ALIGN,
         .align = LV_ALIGN_TOP_MID,
-        .border_width = 1,
+        .border_width = 0,
         .padd_all = 0,
         .radius = 0,
         .bg_color = STATUSBAR_BG_COLOR,
@@ -92,7 +91,7 @@ void status_bar_init(lv_obj_t *parent)
     // Middle area
     _area_middle = lv_obj_create(_obj);
     int width_max = _area_left_width > _area_right_width ? _area_left_width : _area_right_width;
-    style.width = STATUSBAR_WIDTH - width_max * 2;
+    style.width = STATUSBAR_WIDTH - (width_max + STATUSBAR_AREA_OFFSET) * 2;
     style.pos_flag = OBJ_POS_FLAG_ALIGN;
     style.align = LV_ALIGN_CENTER;
     style.bg_opa = LV_OPA_TRANSP;
@@ -102,9 +101,10 @@ void status_bar_init(lv_obj_t *parent)
 
     LV_LOG_TRACE("status bar init finished");
 
-    // Initialize icons
+    // Initialize contents of status_bar
     _lv_ll_init(&_icon_ll, sizeof(icon_node_t));
     wifi_icon_init();
+    status_clock_init(_area_middle);
 }
 
 void status_bar_add_icon(status_bar_area_t area, int id, const lv_img_src_t **state_src, uint8_t state_num)
@@ -137,7 +137,7 @@ void status_bar_add_icon(status_bar_area_t area, int id, const lv_img_src_t **st
     }
     area_icon_count_inc(area);
     for (int i = 0; i < state_num; i++) {
-        status_icon_set_src(icon, i+1, state_src[i]);
+        status_icon_set_src(icon, i+1, (const lv_img_dsc_t *)state_src[i]);
     }
     status_icon_set_state(icon, 1);
 
@@ -177,6 +177,11 @@ void status_bar_set_wifi_state(status_bar_wifi_state_t state)
     }
 
     status_icon_set_state(node->icon, state);
+}
+
+void status_bar_set_clock_time(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
+{
+    status_clock_set_time(day, hour, min, sec);
 }
 
 static icon_node_t *icon_ll_search(int id, status_bar_area_t *area)
@@ -267,23 +272,13 @@ static void wifi_icon_init(void)
     LV_IMG_DECLARE(img_wifi_disconnect);
     LV_IMG_DECLARE(img_wifi_close);
 
-    const lv_img_dsc_t *wifi_img[5] = {
-        &img_wifi_disconnect, &img_wifi_close,
+    const lv_img_dsc_t *wifi_img[] = {
+        &img_wifi_close, &img_wifi_disconnect,
         &img_wifi_1, &img_wifi_2, &img_wifi_3
     };
-    status_bar_add_icon(STATUS_BAR_AREA_LEFT, ICON_WIFI_ID, wifi_img, 5);
+    status_bar_add_icon(STATUS_BAR_AREA_LEFT, ICON_WIFI_ID, (const lv_img_dsc_t **)wifi_img, 5);
 
     LV_LOG_TRACE("wifi icon init finished");
-}
-
-static void show(void)
-{
-
-}
-
-static void hide(void)
-{
-
 }
 
 #endif

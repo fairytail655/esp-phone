@@ -28,12 +28,10 @@ void obj_conf_style(lv_obj_t *obj, obj_conf_style_t *config)
     lv_obj_set_style_radius(obj, config->radius, 0);
     lv_obj_set_style_pad_all(obj, config->padd_all, 0);
     lv_obj_set_style_border_width(obj, config->border_width, 0);
-#ifdef OBJ_CONF_BORDER_EN
+#if OBJ_CONF_BORDER_EN
     if (config->border_width == 0)
         lv_obj_set_style_border_width(obj, 1, 0);
     lv_obj_set_style_border_color(obj, lv_palette_main(LV_PALETTE_RED), 0);
-#else
-
 #endif
 
     // Background

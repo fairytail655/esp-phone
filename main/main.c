@@ -9,7 +9,11 @@
 #include "lv_drivers/indev/mouse.h"
 #include "lv_drivers/indev/keyboard.h"
 #include "lv_drivers/indev/mousewheel.h"
+
+#include <time.h>
+#include <sys/time.h>
 #include "lvgl_phone.h"
+#include "ui/ui.h"
 
 static void hal_init(void);
 static int tick_thread(void *data);
@@ -28,8 +32,9 @@ int main(int argc, char **argv)
     hal_init();
 
     gui_init();
-    status_bar_set_wifi_state(STATUS_BAR_WIFI_STATE_1);
-    lv_timer_create(timer_cb, 2000, NULL);
+    ui_init();
+
+    lv_timer_create(timer_cb, 500, NULL);
 
     while(1) {
         lv_timer_handler();
@@ -41,11 +46,13 @@ int main(int argc, char **argv)
 
 static void timer_cb(struct _lv_timer_t * timer)
 {
-    static status_bar_wifi_state_t i = STATUS_BAR_WIFI_STATE_CLOSE;
-    if (i > STATUS_BAR_WIFI_STATE_3) {
-        i =  STATUS_BAR_WIFI_STATE_CLOSE;
-    }
-    status_bar_set_wifi_state(i++);
+    struct timeval tv;
+    struct timezone tz;
+    struct tm *p;
+
+    gettimeofday(&tv, &tz);
+    p = localtime(&tv.tv_sec);
+    status_bar_set_clock_time(p->tm_wday, p->tm_hour, p->tm_min, p->tm_sec);
 }
 
 /**
