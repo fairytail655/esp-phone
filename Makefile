@@ -7,7 +7,11 @@ PROJECT 			?= lvgl-sdl
 MAKEFLAGS 			:= -j $(shell nproc)
 SRC_EXT      		:= c
 OBJ_EXT				:= o
-CC 					?= gcc
+CC 					:= gcc
+
+CPP					:= g++
+SRC_EXT_CPP      	:= cpp
+OBJ_EXT_CPP			:= opp
 
 SRC_DIR				:= ./
 WORKING_DIR			:= ./build
@@ -23,21 +27,30 @@ WARNINGS 			:= -Wall -Wextra \
 						-Wempty-body -Wshift-negative-value -Wstack-usage=2048 \
             			-Wtype-limits -Wsizeof-pointer-memaccess -Wpointer-arith
 
+WARNINGS_CPP 		:= -Wall
+
+
 CFLAGS 				:= -O0 -g $(WARNINGS)
+
+CFLAGS_CPP 			:= -O0 -g $(WARNINGS_CPP)
 
 # Add simulator define to allow modification of source
 DEFINES				:= -D SIMULATOR=1 -D LV_BUILD_TEST=0
 
 # Include simulator inc folder first so lv_conf.h from custom UI can be used instead
-INC 				:= -I./ -I./lvgl/ -I./lvgl_phone
+INC 				:= -I./ -I./lvgl/ -I./phone_gui/src
 LDLIBS	 			:= -lSDL2 -lm
 BIN 				:= $(BIN_DIR)/demo
 
 COMPILE				= $(CC) $(CFLAGS) $(INC) $(DEFINES)
+COMPILE_CPP			= $(CPP) $(CFLAGS_CPP) $(INC)
 
 # Automatically include all source files
 SRCS 				:= $(shell find $(SRC_DIR) -type f -name '*.c' -not -path '*/\.*')
 OBJECTS    			:= $(patsubst $(SRC_DIR)%,$(BUILD_DIR)/%,$(SRCS:.$(SRC_EXT)=.$(OBJ_EXT)))
+
+SRCS_CPP 			:= $(shell find $(SRC_DIR) -type f -name '*.cpp' -not -path '*/\.*')
+OBJECTS_CPP    		:= $(patsubst $(SRC_DIR)%,$(BUILD_DIR)/%,$(SRCS_CPP:.$(SRC_EXT_CPP)=.$(OBJ_EXT_CPP)))
 
 all: default
 
@@ -46,9 +59,14 @@ $(BUILD_DIR)/%.$(OBJ_EXT): $(SRC_DIR)/%.$(SRC_EXT)
 	@mkdir -p $(dir $@)
 	@$(COMPILE) -c -o "$@" "$<"
 
-default: $(OBJECTS)
+$(BUILD_DIR)/%.$(OBJ_EXT_CPP): $(SRC_DIR)/%.$(SRC_EXT_CPP)
+	@echo 'Building project file: $<'
+	@mkdir -p $(dir $@)
+	@$(COMPILE_CPP) -c -o "$@" "$<"
+
+default: $(OBJECTS) $(OBJECTS_CPP)
 	@mkdir -p $(BIN_DIR)
-	@$(CC) -o $(BIN) $(OBJECTS) $(LDFLAGS) ${LDLIBS}
+	@$(CC) -o $(BIN) $(OBJECTS) $(OBJECTS_CPP) $(LDFLAGS) ${LDLIBS}
 
 clean:
 	rm -rf $(WORKING_DIR)

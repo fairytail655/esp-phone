@@ -1,8 +1,10 @@
-#ifndef GUI_CONF_H
-#define GUI_CONF_H
+#ifndef INTERFACE_CONF_H
+#define INTERFACE_CONF_H
 
 #include "lvgl.h"
-#include "../lv_phone_conf.h"
+#include "../phone_gui_conf.h"
+
+#define GUI_EVENT_OBJ       lv_layer_top()
 
 
 #define WALLPAPER_COLOR     lv_color_make(0x4C, 0x58, 0x7B)
@@ -23,5 +25,6 @@
 #define STATUSBAR_WIDTH                     0
 #define STATUSBAR_HEIGHT                    0
 #endif
+
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef LV_PHONE_CONF_H
-#define LV_PHONE_CONF_H
+#ifndef PHONE_GUI_CONF_H
+#define PHONE_GUI_CONF_H
 
 
 /* GUI */
@@ -12,7 +12,7 @@
 #define STATUSBAR_CLOCK_FORMAT_24           1
 
 
-/* Common */
+/* Utils */
 #define OBJ_CONF_BORDER_EN                  1
 
 
