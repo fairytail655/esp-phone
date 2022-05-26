@@ -26,12 +26,18 @@ void PhoneGui::setWallpaperColor(lv_color_t color)
     wallpaper_set_color(color);
 }
 
+#if STATUSBAR_EN
+#if STATUSBAR_AREA_LEFT_EN
 void PhoneGui::setWifiLevel(phone_gui_wifi_t level)
 {
     status_bar_set_wifi_state((status_bar_wifi_state_t)level);
 }
+#endif
 
+#if STATUSBAR_CLOCK_EN
 void PhoneGui::setClockTime(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
 {
     status_bar_set_clock_time(day, hour, min, sec);
 }
+#endif
+#endif

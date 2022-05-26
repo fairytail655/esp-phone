@@ -8,8 +8,11 @@
 #define STATUSBAR_AREA_MID_EN               1
 #define STATUSBAR_AREA_RIGHT_EN             1
 
+#if STATUSBAR_AREA_MID_EN
 #define STATUSBAR_CLOCK_EN                  1
 #define STATUSBAR_CLOCK_FORMAT_24           1
+#define STATUSBAR_CLOCK_SECOND_EN           1
+#endif
 
 
 /* Utils */

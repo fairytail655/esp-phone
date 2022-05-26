@@ -2,6 +2,7 @@
 #define PHONE_GUI_H
 
 #include "lvgl.h"
+#include "phone_gui_conf.h"
 
 typedef enum {
     PHONE_GUI_WIFI_CLOSED = 1,
@@ -19,9 +20,15 @@ public:
     // Wallpaper
     void setWallpaperImage(const lv_img_dsc_t *src);
     void setWallpaperColor(lv_color_t color);
+#if STATUSBAR_EN
     // Status bar
+#if STATUSBAR_AREA_LEFT_EN
     void setWifiLevel(phone_gui_wifi_t level);
+#endif
+#if STATUSBAR_CLOCK_EN
     void setClockTime(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec);
+#endif
+#endif
 };
 
 #endif

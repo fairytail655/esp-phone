@@ -3,8 +3,6 @@
 
 #include "../../phone_gui_conf.h"
 
-#if STATUSBAR_EN
-
 #include <stdint.h>
 #include "lvgl.h"
 
@@ -26,8 +24,6 @@ void status_icon_set_state(status_icon_t *icon, uint8_t state_index);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif

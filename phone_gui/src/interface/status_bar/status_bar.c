@@ -4,8 +4,6 @@
 #include "status_bar.h"
 #include "status_clock.h"
 
-#if STATUSBAR_EN
-
 #define ICON_WIFI_ID        -1
 
 typedef struct {
@@ -50,6 +48,9 @@ void status_bar_init(lv_obj_t *parent)
     obj_conf_style(_obj, &style);
     lv_obj_clear_flag(_obj, LV_OBJ_FLAG_SCROLLABLE);
 
+    // Initialize contents of status_bar
+    _lv_ll_init(&_icon_ll, sizeof(icon_node_t));
+
 #if STATUSBAR_AREA_LEFT_EN
     // Left area
     _area_left = lv_obj_create(_obj);
@@ -67,6 +68,8 @@ void status_bar_init(lv_obj_t *parent)
     lv_obj_set_flex_align(_area_left, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(_area_left, STATUSBAR_AREA_PAD, 0);
     lv_obj_clear_flag(_area_left, LV_OBJ_FLAG_SCROLLABLE);
+    // Init wifi icons
+    wifi_icon_init();
 #endif
 
 #if STATUSBAR_AREA_RIGHT_EN
@@ -98,14 +101,13 @@ void status_bar_init(lv_obj_t *parent)
     style.bg_opa = LV_OPA_TRANSP;
     obj_conf_style(_area_middle, &style);
     lv_obj_clear_flag(_area_middle, LV_OBJ_FLAG_SCROLLABLE);
+#if STATUSBAR_CLOCK_EN
+    // Init clock
+    status_clock_init(_area_middle);
+#endif
 #endif
 
     LV_LOG_TRACE("status bar init finished");
-
-    // Initialize contents of status_bar
-    _lv_ll_init(&_icon_ll, sizeof(icon_node_t));
-    wifi_icon_init();
-    status_clock_init(_area_middle);
 }
 
 void status_bar_add_icon(status_bar_area_t area, int id, const lv_img_src_t **state_src, uint8_t state_num)
@@ -183,6 +185,23 @@ void status_bar_set_wifi_state(status_bar_wifi_state_t state)
 void status_bar_set_clock_time(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
 {
     status_clock_set_time(day, hour, min, sec);
+}
+
+static void wifi_icon_init(void)
+{
+    LV_IMG_DECLARE(img_wifi_1);
+    LV_IMG_DECLARE(img_wifi_2);
+    LV_IMG_DECLARE(img_wifi_3);
+    LV_IMG_DECLARE(img_wifi_disconnect);
+    LV_IMG_DECLARE(img_wifi_close);
+
+    const lv_img_dsc_t *wifi_img[] = {
+        &img_wifi_close, &img_wifi_disconnect,
+        &img_wifi_1, &img_wifi_2, &img_wifi_3
+    };
+    status_bar_add_icon(STATUS_BAR_AREA_LEFT, ICON_WIFI_ID, (const lv_img_dsc_t **)wifi_img, 5);
+
+    LV_LOG_TRACE("wifi icon init finished");
 }
 
 static icon_node_t *icon_ll_search(int id, status_bar_area_t *area)
@@ -264,22 +283,3 @@ static bool area_icon_count_check(status_bar_area_t area)
 
     return res;
 }
-
-static void wifi_icon_init(void)
-{
-    LV_IMG_DECLARE(img_wifi_1);
-    LV_IMG_DECLARE(img_wifi_2);
-    LV_IMG_DECLARE(img_wifi_3);
-    LV_IMG_DECLARE(img_wifi_disconnect);
-    LV_IMG_DECLARE(img_wifi_close);
-
-    const lv_img_dsc_t *wifi_img[] = {
-        &img_wifi_close, &img_wifi_disconnect,
-        &img_wifi_1, &img_wifi_2, &img_wifi_3
-    };
-    status_bar_add_icon(STATUS_BAR_AREA_LEFT, ICON_WIFI_ID, (const lv_img_dsc_t **)wifi_img, 5);
-
-    LV_LOG_TRACE("wifi icon init finished");
-}
-
-#endif

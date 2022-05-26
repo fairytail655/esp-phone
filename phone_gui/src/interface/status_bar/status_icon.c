@@ -2,8 +2,6 @@
 #include "../interface_conf.h"
 #include "status_icon.h"
 
-#if STATUSBAR_EN
-
 status_icon_t *status_icon_create(uint8_t state_num, lv_obj_t *parent)
 {
     // Create container
@@ -88,5 +86,3 @@ void status_icon_set_state(status_icon_t *icon, uint8_t state_index)
 
     icon->current_state = state_index;
 }
-
-#endif

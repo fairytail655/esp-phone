@@ -21,6 +21,13 @@ PhoneGui gui;
 
 void timer_cb(struct _lv_timer_t *)
 {
+    struct timeval tv;
+    struct timezone tz;
+    struct tm *p;
+
+    gettimeofday(&tv, &tz);
+    p = localtime(&tv.tv_sec);
+    gui.setClockTime(p->tm_wday, p->tm_hour, p->tm_min, p->tm_sec);
 }
 
 int main(int argc, char **argv)
