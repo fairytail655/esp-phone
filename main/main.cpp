@@ -19,6 +19,10 @@ static int tick_thread(void *data);
 
 PhoneGui gui;
 
+void timer_cb(struct _lv_timer_t *)
+{
+}
+
 int main(int argc, char **argv)
 {
     (void)argc; /*Unused*/
@@ -30,7 +34,10 @@ int main(int argc, char **argv)
     /*Initialize the HAL (display, input devices, tick) for LVGL*/
     hal_init();
 
+    LV_IMG_DECLARE(img_wallpaper_1);
     gui.begin();
+
+    lv_timer_create(timer_cb, 500, NULL);
 
     while(1) {
         lv_timer_handler();

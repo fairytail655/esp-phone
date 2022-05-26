@@ -2,7 +2,7 @@
 #define INTERFACE_H
 
 #include "wallpaper/wallpaper.h"
-// #include "status_bar/status_bar.h"
+#include "status_bar/status_bar.h"
 
 #ifdef __cplusplus
 extern "C" {
