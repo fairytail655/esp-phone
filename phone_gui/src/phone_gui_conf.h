@@ -2,7 +2,8 @@
 #define PHONE_GUI_CONF_H
 
 
-/* GUI */
+/* Interface */
+// Status bar
 #define STATUSBAR_EN                        1
 #define STATUSBAR_AREA_LEFT_EN              1
 #define STATUSBAR_AREA_MID_EN               1
@@ -23,9 +24,9 @@
 #define LOG_TRACE_GUI                       1
 
 #if LOG_TRACE_GUI
-    #define GUI_TRACE(...) LV_LOG_TRACE(__VA_ARGS__)
+    #define INTERFACE_TRACE(...) LV_LOG_TRACE(__VA_ARGS__)
 #else
-    #define GUI_TRACE(...)
+    #define INTERFACE_TRACE(...)
 #endif
 
 

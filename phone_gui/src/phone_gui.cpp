@@ -27,6 +27,7 @@ void PhoneGui::setWallpaperColor(lv_color_t color)
 }
 
 #if STATUSBAR_EN
+
 #if STATUSBAR_AREA_LEFT_EN
 void PhoneGui::setWifiLevel(phone_gui_wifi_t level)
 {
@@ -40,4 +41,20 @@ void PhoneGui::setClockTime(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
     status_bar_set_clock_time(day, hour, min, sec);
 }
 #endif
+
+void PhoneGui::setBatteryPercent(uint8_t percent)
+{
+    status_bar_set_battery_percent(percent);
+}
+
+void PhoneGui::setBatteryLevel(phone_gui_battery_t level)
+{
+    status_bar_set_battery_percent(((uint8_t)level + 1) * 20);
+}
+
+void PhoneGui::setBatteryCharge(bool flag)
+{
+    status_bar_set_battery_charge(flag);
+}
+
 #endif

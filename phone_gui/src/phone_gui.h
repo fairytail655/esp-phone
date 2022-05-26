@@ -12,6 +12,14 @@ typedef enum {
     PHONE_GUI_WIFI_3,
 } phone_gui_wifi_t;
 
+typedef enum {
+    PHONE_GUI_BAT_EMPTY = 0,
+    PHONE_GUI_BAT_1,
+    PHONE_GUI_BAT_2,
+    PHONE_GUI_BAT_3,
+    PHONE_GUI_BAT_FULL,
+} phone_gui_battery_t;
+
 class PhoneGui {
 public:
     PhoneGui(void);
@@ -28,6 +36,9 @@ public:
 #if STATUSBAR_CLOCK_EN
     void setClockTime(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec);
 #endif
+    void setBatteryPercent(uint8_t percent);
+    void setBatteryLevel(phone_gui_battery_t level);
+    void setBatteryCharge(bool flag);
 #endif
 };
 

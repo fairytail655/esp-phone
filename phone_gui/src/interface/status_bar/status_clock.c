@@ -17,11 +17,6 @@ static const char *_day_str[] = {
 
 void status_clock_init(lv_obj_t *parent)
 {
-    // Parent layout
-    lv_obj_set_flex_flow(parent, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(parent, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_clear_flag(parent, LV_OBJ_FLAG_SCROLLABLE);
-
     // Main area
     lv_obj_t *obj = lv_obj_create(parent);
     obj_conf_style_t style = {
@@ -82,7 +77,7 @@ void status_clock_init(lv_obj_t *parent)
     lv_label_set_text_fmt(_label_sec, "%02d", _sec);
 #endif
 
-    GUI_TRACE("status_clock init finished");
+    INTERFACE_TRACE("status_clock init finished");
 }
 
 void status_clock_set_time(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
@@ -131,5 +126,5 @@ void status_clock_set_time(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
     (void)_sec;
 #endif
 
-    GUI_TRACE("status_clock set time: %s-%02d:%02d:%02d", _day_str[day - 1], hour, min, sec);
+    INTERFACE_TRACE("status_clock set time: %s-%02d:%02d:%02d", _day_str[day - 1], hour, min, sec);
 }

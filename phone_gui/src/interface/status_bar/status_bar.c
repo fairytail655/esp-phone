@@ -3,6 +3,7 @@
 #include "status_icon.h"
 #include "status_bar.h"
 #include "status_clock.h"
+#include "status_battery.h"
 
 #define ICON_WIFI_ID        -1
 
@@ -68,7 +69,7 @@ void status_bar_init(lv_obj_t *parent)
     lv_obj_set_flex_align(_area_left, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(_area_left, STATUSBAR_AREA_PAD, 0);
     lv_obj_clear_flag(_area_left, LV_OBJ_FLAG_SCROLLABLE);
-    // Init wifi icons
+    // Init wifi
     wifi_icon_init();
 #endif
 
@@ -89,6 +90,8 @@ void status_bar_init(lv_obj_t *parent)
     lv_obj_set_flex_align(_area_right, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(_area_right, STATUSBAR_AREA_PAD, 0);
     lv_obj_clear_flag(_area_right, LV_OBJ_FLAG_SCROLLABLE);
+    // Init battery
+    status_battery_init(_area_right);
 #endif
 
 #if STATUSBAR_AREA_MID_EN
@@ -100,6 +103,9 @@ void status_bar_init(lv_obj_t *parent)
     style.align = LV_ALIGN_CENTER;
     style.bg_opa = LV_OPA_TRANSP;
     obj_conf_style(_area_middle, &style);
+    // Config layout
+    lv_obj_set_flex_flow(_area_middle, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(_area_middle, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_clear_flag(_area_middle, LV_OBJ_FLAG_SCROLLABLE);
 #if STATUSBAR_CLOCK_EN
     // Init clock
@@ -185,6 +191,16 @@ void status_bar_set_wifi_state(status_bar_wifi_state_t state)
 void status_bar_set_clock_time(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
 {
     status_clock_set_time(day, hour, min, sec);
+}
+
+void status_bar_set_battery_percent(uint8_t percent)
+{
+    status_battery_set_percent(percent);
+}
+
+void status_bar_set_battery_charge(bool flag)
+{
+    status_battery_set_charge(flag);
 }
 
 static void wifi_icon_init(void)

@@ -30,7 +30,7 @@ typedef struct {
     uint16_t bg_opa;
 } obj_conf_style_t;
 
-void obj_conf_style(lv_obj_t *obj, obj_conf_style_t *config);
+void obj_conf_style(lv_obj_t *obj, obj_conf_style_t *style);
 
 #ifdef __cplusplus
 }

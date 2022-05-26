@@ -7,6 +7,6 @@ void interface_init(void)
 {
     wallpaper_init();
 #if STATUSBAR_EN
-    status_bar_init(GUI_EVENT_OBJ);
+    status_bar_init(INTERFACE_EVENT_OBJ);
 #endif
 }
