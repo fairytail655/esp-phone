@@ -24,7 +24,7 @@ void navigate_bar_init(lv_obj_t *parent)
         .align = LV_ALIGN_BOTTOM_MID,
         .radius = 0,
         .border_width = 0,
-        .padd_all = 0,
+        .pad_all = 0,
         .bg_color = NAVIGATEBAR_BG_COLOR,
         .bg_opa = NAVIGATEBAR_BG_OPA,
     };

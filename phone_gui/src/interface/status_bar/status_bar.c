@@ -38,7 +38,7 @@ void status_bar_init(lv_obj_t *parent)
         .pos_flag = OBJ_POS_FLAG_ALIGN,
         .align = LV_ALIGN_TOP_MID,
         .border_width = 0,
-        .padd_all = 0,
+        .pad_all = 0,
         .radius = 0,
         .bg_color = STATUSBAR_BG_COLOR,
         .bg_opa = LV_OPA_COVER,

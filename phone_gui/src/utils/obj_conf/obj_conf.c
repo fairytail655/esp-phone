@@ -26,7 +26,7 @@ void obj_conf_style(lv_obj_t *obj, obj_conf_style_t *style)
 
     // Shape
     lv_obj_set_style_radius(obj, style->radius, 0);
-    lv_obj_set_style_pad_all(obj, style->padd_all, 0);
+    lv_obj_set_style_pad_all(obj, style->pad_all, 0);
     lv_obj_set_style_border_width(obj, style->border_width, 0);
 #if OBJ_CONF_BORDER_EN
     if (style->border_width == 0)

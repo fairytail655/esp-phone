@@ -25,7 +25,7 @@ typedef struct {
     int16_t y_offset;
     uint16_t radius;
     uint16_t border_width;
-    uint16_t padd_all;
+    uint16_t pad_all;
     lv_color_t bg_color;
     uint16_t bg_opa;
 } obj_conf_style_t;

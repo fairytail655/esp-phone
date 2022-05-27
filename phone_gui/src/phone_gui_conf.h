@@ -19,7 +19,7 @@
 
 
 /* Utils */
-#define OBJ_CONF_BORDER_EN                  1
+#define OBJ_CONF_BORDER_EN                  0
 
 
 /* Log */

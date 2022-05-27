@@ -23,7 +23,7 @@ void status_clock_init(lv_obj_t *parent)
         .align = LV_ALIGN_CENTER,
         .radius = 0,
         .border_width = 0,
-        .padd_all = 0,
+        .pad_all = 0,
         .bg_opa = LV_OPA_TRANSP,
     };
     lv_obj_update_layout(parent);

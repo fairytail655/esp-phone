@@ -12,7 +12,7 @@ status_icon_t *status_icon_create(uint8_t state_num, lv_obj_t *parent)
         .pos_flag = OBJ_POS_FLAG_NONE,
         .radius = 0,
         .border_width = 0,
-        .padd_all = 0,
+        .pad_all = 0,
         .bg_opa = LV_OPA_TRANSP,
     };
     obj_conf_style(obj, &style);

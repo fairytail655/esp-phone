@@ -25,6 +25,7 @@ void PhoneGui::begin(void)
 #if NAVIGATEBAR_EN
     navigate_bar_init(INTERFACE_EVENT_OBJ);
 #endif
+    shortcut_bar_init(INTERFACE_EVENT_OBJ);
 }
 
 void PhoneGui::setWallpaperImage(const lv_img_dsc_t *src)
