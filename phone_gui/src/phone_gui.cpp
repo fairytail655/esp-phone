@@ -22,7 +22,9 @@ void PhoneGui::begin(void)
 #if STATUSBAR_EN
     status_bar_init(INTERFACE_EVENT_OBJ);
 #endif
+#if NAVIGATEBAR_EN
     navigate_bar_init(INTERFACE_EVENT_OBJ);
+#endif
 }
 
 void PhoneGui::setWallpaperImage(const lv_img_dsc_t *src)
@@ -91,5 +93,17 @@ void PhoneGui::disableBatteryCharge(void)
         _battery_charging = false;
         status_battery_set_percent(_battery_percent, _battery_charging);
     }
+}
+#endif
+
+#if NAVIGATEBAR_EN
+void PhoneGui::showNavigateBar(void)
+{
+    navigate_bar_show();
+}
+
+void PhoneGui::hideNavigateBar(void)
+{
+    navigate_bar_hide();
 }
 #endif

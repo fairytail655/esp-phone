@@ -1,7 +1,6 @@
 #ifndef PHONE_GUI_CONF_H
 #define PHONE_GUI_CONF_H
 
-
 /* Interface */
 // Status bar
 #define STATUSBAR_EN                        1
@@ -14,6 +13,9 @@
 #define STATUSBAR_CLOCK_FORMAT_24           1
 #define STATUSBAR_CLOCK_SECOND_EN           1
 #endif
+
+// Navigate bar
+#define NAVIGATEBAR_EN                      1
 
 
 /* Utils */

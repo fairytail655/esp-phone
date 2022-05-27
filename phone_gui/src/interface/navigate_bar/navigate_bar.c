@@ -2,8 +2,9 @@
 #include "../../utils/utils.h"
 #include "navigate_bar.h"
 
-static lv_obj_t *_event_obj;
 static lv_obj_t *_bar;
+static lv_obj_t *_event_obj;
+static lv_event_code_t _event_id;
 
 static void btn_left_event_cb(lv_event_t *e);
 static void btn_middle_event_cb(lv_event_t *e);
@@ -12,6 +13,7 @@ static void btn_right_event_cb(lv_event_t *e);
 void navigate_bar_init(lv_obj_t *parent)
 {
     _event_obj = parent;
+    _event_id = (lv_event_code_t)lv_event_register_id();
 
     // Main area
     _bar = lv_obj_create(parent);
@@ -26,9 +28,11 @@ void navigate_bar_init(lv_obj_t *parent)
         .bg_color = NAVIGATEBAR_BG_COLOR,
         .bg_opa = NAVIGATEBAR_BG_OPA,
     };
+    obj_conf_style(_bar, &style);
     lv_obj_set_flex_flow(_bar, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(_bar, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(_bar, 0, 0);
+    lv_obj_clear_flag(_bar, LV_OBJ_FLAG_SCROLLABLE);
 
     style.width = LV_SIZE_CONTENT;
     style.pos_flag = OBJ_POS_FLAG_NONE;
@@ -63,19 +67,41 @@ void navigate_bar_init(lv_obj_t *parent)
     lv_obj_add_event_cb(btn_right, btn_right_event_cb, LV_EVENT_PRESSED, NULL);
     // Modify opacity when button pressed
     lv_obj_set_style_bg_opa(btn_right, NAVIGATEBAR_BTN_PRESS_OPA, LV_STATE_PRESSED);
+
+    INTERFACE_TRACE("navigate bar initialize finished");
+}
+
+lv_event_code_t navigate_bar_get_event_id(void)
+{
+    return _event_id;
+}
+
+void navigate_bar_show(void)
+{
+    lv_obj_clear_flag(_bar, LV_OBJ_FLAG_HIDDEN);
+    INTERFACE_TRACE("navigate bar show");
+}
+
+void navigate_bar_hide(void)
+{
+    lv_obj_add_flag(_bar, LV_OBJ_FLAG_HIDDEN);
+    INTERFACE_TRACE("navigate bar hide");
 }
 
 static void btn_left_event_cb(lv_event_t *e)
 {
-    LV_LOG_ERROR("left button");
+    INTERFACE_TRACE("navigate bar left button clicked");
+    lv_event_send(_event_obj, _event_id, NAVIGATE_BAR_LEFT_BTN);
 }
 
 static void btn_middle_event_cb(lv_event_t *e)
 {
-    LV_LOG_ERROR("middle button");
+    INTERFACE_TRACE("navigate bar middle button clicked");
+    lv_event_send(_event_obj, _event_id, NAVIGATE_BAR_MID_BTN);
 }
 
 static void btn_right_event_cb(lv_event_t *e)
 {
-    LV_LOG_ERROR("right button");
+    INTERFACE_TRACE("navigate bar right button clicked");
+    lv_event_send(_event_obj, _event_id, NAVIGATE_BAR_RIGHT_BTN);
 }

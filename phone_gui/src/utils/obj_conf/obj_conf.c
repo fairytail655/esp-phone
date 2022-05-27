@@ -36,6 +36,5 @@ void obj_conf_style(lv_obj_t *obj, obj_conf_style_t *style)
 
     // Background
     lv_obj_set_style_bg_opa(obj, style->bg_opa, 0);
-    if (style->bg_opa != LV_OPA_TRANSP)
-        lv_obj_set_style_bg_color(obj, style->bg_color, 0);
+    lv_obj_set_style_bg_color(obj, style->bg_color, 0);
 }

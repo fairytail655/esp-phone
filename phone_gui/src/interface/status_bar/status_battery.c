@@ -57,9 +57,13 @@ void status_battery_set_percent(uint8_t percent, bool flag)
     lv_label_set_text_fmt(_percent_label, "%d%%", percent);
     if (!flag)
         status_icon_set_state(_icon, (percent + 19) / 20);
+
+    INTERFACE_TRACE("status battery set percent/flag [%d/%d]", percent, flag);
 }
 
 void status_battery_set_charge(void)
 {
     status_icon_set_state(_icon, 6);
+
+    INTERFACE_TRACE("status battery set charge", flag);
 }

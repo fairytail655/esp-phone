@@ -84,6 +84,8 @@ void status_clock_set_day(uint8_t day)
     else {
         lv_label_set_text_fmt(_label_day, "%s", _day_str[day]);
     }
+
+    INTERFACE_TRACE("status_clock set day [%d]", day);
 }
 
 void status_clock_set_hour(uint8_t hour)
@@ -104,6 +106,8 @@ void status_clock_set_hour(uint8_t hour)
         lv_label_set_text_fmt(_label_hour, "%02d", hour);
 #endif
     }
+
+    INTERFACE_TRACE("status_clock set hour [%d]", hour);
 }
 
 void status_clock_set_min(uint8_t min)
@@ -115,6 +119,8 @@ void status_clock_set_min(uint8_t min)
     else {
         lv_label_set_text_fmt(_label_min, "%02d", min);
     }
+
+    INTERFACE_TRACE("status_clock set min [%d]", min);
 }
 
 void status_clock_set_sec(uint8_t sec)
@@ -126,4 +132,6 @@ void status_clock_set_sec(uint8_t sec)
     else {
         lv_label_set_text_fmt(_label_sec, "%02d", sec);
     }
+
+    INTERFACE_TRACE("status_clock set sec [%d]", sec);
 }

@@ -61,7 +61,7 @@ void status_bar_init(lv_obj_t *parent)
     obj_conf_style(_area_left, &style);
     _area_left_width = style.width;
     _area_left_icon_num_max = style.width / (STATUSBAR_ICON_SIZE + STATUSBAR_AREA_PAD);
-    LV_LOG_INFO("left area can contain %d icons", _area_left_icon_num_max);
+    INTERFACE_TRACE("left area can contain %d icons", _area_left_icon_num_max);
     // Config layout
     lv_obj_set_flex_flow(_area_left, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(_area_left, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -82,7 +82,7 @@ void status_bar_init(lv_obj_t *parent)
     obj_conf_style(_area_right, &style);
     _area_right_width = style.width;
     _area_right_icon_num_max = style.width / (STATUSBAR_ICON_SIZE + STATUSBAR_AREA_PAD);
-    LV_LOG_INFO("left area can contain %d icons", _area_right_icon_num_max);
+    INTERFACE_TRACE("left area can contain %d icons", _area_right_icon_num_max);
     // Config layout
     lv_obj_set_flex_flow(_area_right, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(_area_right, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -117,7 +117,7 @@ void status_bar_init(lv_obj_t *parent)
 #endif
 #endif
 
-    LV_LOG_TRACE("status bar init finished");
+    INTERFACE_TRACE("status bar init finished");
 }
 
 void status_bar_add_icon(status_bar_area_t area, int id, const lv_img_src_t **state_src, uint8_t state_num)
@@ -163,7 +163,7 @@ void status_bar_add_icon(status_bar_area_t area, int id, const lv_img_src_t **st
     icon_node->area = area;
     icon_node->icon = icon;
 
-    LV_LOG_INFO("status_bar add an icon(%d) in the [%s] area with id(%d)", state_num, _area_str[area], id);
+    INTERFACE_TRACE("status_bar add an icon(%d) in the [%s] area with id(%d)", state_num, _area_str[area], id);
 }
 
 void status_bar_del_icon(int id)
@@ -178,7 +178,7 @@ void status_bar_del_icon(int id)
     status_icon_destory(node->icon);
     _lv_ll_remove(&_icon_ll, node);
     area_icon_count_dec(area);
-    LV_LOG_INFO("status_bar delete icon(id:%d) in the [%s] area", id, _area_str[area]);
+    INTERFACE_TRACE("status_bar delete icon(id:%d) in the [%s] area", id, _area_str[area]);
 }
 
 void status_bar_set_wifi_state(status_bar_wifi_state_t state)
@@ -190,6 +190,8 @@ void status_bar_set_wifi_state(status_bar_wifi_state_t state)
     }
 
     status_icon_set_state(node->icon, state);
+
+    INTERFACE_TRACE("wifi state set [%d]", state);
 }
 
 static void wifi_icon_init(void)
@@ -206,7 +208,7 @@ static void wifi_icon_init(void)
     };
     status_bar_add_icon(STATUS_BAR_AREA_LEFT, ICON_WIFI_ID, (const lv_img_dsc_t **)wifi_img, 5);
 
-    LV_LOG_TRACE("wifi icon init finished");
+    INTERFACE_TRACE("wifi icon init finished");
 }
 
 static icon_node_t *icon_ll_search(int id, status_bar_area_t *area)

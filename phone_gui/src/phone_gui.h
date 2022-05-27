@@ -32,6 +32,9 @@ public:
     void enableBatteryCharge(void);
     void disableBatteryCharge(void);
 #endif
+    /* Navigate bar */
+    void showNavigateBar(void);
+    void hideNavigateBar(void);
 
 private:
     /* Status bar */
