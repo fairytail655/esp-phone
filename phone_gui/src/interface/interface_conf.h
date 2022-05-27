@@ -7,10 +7,8 @@
 /* Event */
 #define INTERFACE_EVENT_OBJ                 lv_layer_top()
 
-
 /* Wallpaper */
 #define WALLPAPER_COLOR                     lv_color_make(0x4C, 0x58, 0x7B)
-
 
 /* Status bar */
 // Main area
@@ -26,5 +24,12 @@
 #define STATUSBAR_CLOCK_FONT                &lv_font_montserrat_18
 // Battery
 #define STATUSBAR_BATTERY_FONT              &lv_font_montserrat_14
+
+/* Navigate bar */
+#define NAVIGATEBAR_WIDTH                   LV_HOR_RES
+#define NAVIGATEBAR_HEIGHT                  50
+#define NAVIGATEBAR_BG_COLOR                lv_color_make(255, 255, 255)
+#define NAVIGATEBAR_BG_OPA                  LV_OPA_20
+#define NAVIGATEBAR_BTN_PRESS_OPA           LV_OPA_50
 
 #endif

@@ -18,7 +18,11 @@ PhoneGui::~PhoneGui(void)
 
 void PhoneGui::begin(void)
 {
-    interface_init();
+    wallpaper_init();
+#if STATUSBAR_EN
+    status_bar_init(INTERFACE_EVENT_OBJ);
+#endif
+    navigate_bar_init(INTERFACE_EVENT_OBJ);
 }
 
 void PhoneGui::setWallpaperImage(const lv_img_dsc_t *src)
