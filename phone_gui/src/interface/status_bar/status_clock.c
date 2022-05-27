@@ -5,13 +5,13 @@
 
 static lv_obj_t *_label_day, *_label_hour, *_label_min, *_label_sec;
 static const char *_day_str[] = {
+    "Sunday",
     "Monday",
     "Tuesday",
     "Wednesday",
     "Thursday",
     "Friday",
     "Saturday",
-    "Sunday"
 };
 
 void status_clock_init(lv_obj_t *parent)
@@ -77,12 +77,12 @@ void status_clock_init(lv_obj_t *parent)
 
 void status_clock_set_day(uint8_t day)
 {
-    if ((day > 7) || (day < 1)) {
-        LV_LOG_WARN("day [%d] out of range", day);
+    if (day > 6) {
+        LV_LOG_WARN("day [%d] out of range(0-6)", day);
         return;
     }
     else {
-        lv_label_set_text_fmt(_label_day, "%s", _day_str[day - 1]);
+        lv_label_set_text_fmt(_label_day, "%s", _day_str[day]);
     }
 }
 

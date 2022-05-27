@@ -57,7 +57,7 @@ void PhoneGui::setClockTime(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
 #if STATUSBAR_CLOCK_SECOND_EN
     if (_sec != sec) {
         _sec = sec;
-        status_clock_set_day(sec);
+        status_clock_set_sec(sec);
     }
 #else
     (void)sec;
