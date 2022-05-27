@@ -107,14 +107,15 @@ static void hal_init(void)
     indev_drv_2.read_cb = keyboard_read;
     lv_indev_t *kb_indev = lv_indev_drv_register(&indev_drv_2);
     lv_indev_set_group(kb_indev, g);
-    mousewheel_init();
-    static lv_indev_drv_t indev_drv_3;
-    lv_indev_drv_init(&indev_drv_3); /*Basic initialization*/
-    indev_drv_3.type = LV_INDEV_TYPE_ENCODER;
-    indev_drv_3.read_cb = mousewheel_read;
 
-    lv_indev_t * enc_indev = lv_indev_drv_register(&indev_drv_3);
-    lv_indev_set_group(enc_indev, g);
+    // mousewheel_init();
+    // static lv_indev_drv_t indev_drv_3;
+    // lv_indev_drv_init(&indev_drv_3); /*Basic initialization*/
+    // indev_drv_3.type = LV_INDEV_TYPE_ENCODER;
+    // indev_drv_3.read_cb = mousewheel_read;
+
+    // lv_indev_t * enc_indev = lv_indev_drv_register(&indev_drv_3);
+    // lv_indev_set_group(enc_indev, g);
 
     /*Set a cursor for the mouse*/
     LV_IMG_DECLARE(mouse_cursor_icon); /*Declare the image file.*/

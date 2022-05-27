@@ -74,21 +74,17 @@ void navigate_bar_init(lv_obj_t *parent)
     INTERFACE_TRACE("navigate bar initialize finished");
 }
 
+void navigate_bar_show(bool flag)
+{
+    if (flag)
+        lv_obj_clear_flag(_bar, LV_OBJ_FLAG_HIDDEN);
+    else
+        lv_obj_add_flag(_bar, LV_OBJ_FLAG_HIDDEN);
+}
+
 lv_event_code_t navigate_bar_get_event_id(void)
 {
     return _event_id;
-}
-
-void navigate_bar_show(void)
-{
-    lv_obj_clear_flag(_bar, LV_OBJ_FLAG_HIDDEN);
-    INTERFACE_TRACE("navigate bar show");
-}
-
-void navigate_bar_hide(void)
-{
-    lv_obj_add_flag(_bar, LV_OBJ_FLAG_HIDDEN);
-    INTERFACE_TRACE("navigate bar hide");
 }
 
 static void btn_left_event_cb(lv_event_t *e)

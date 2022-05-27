@@ -12,9 +12,8 @@ extern "C" {
 #endif
 
 void navigate_bar_init(lv_obj_t *parent);
+void navigate_bar_show(bool flag);
 lv_event_code_t navigate_bar_get_event_id(void);
-void navigate_bar_show(void);
-void navigate_bar_hide(void);
 
 #ifdef __cplusplus
 }

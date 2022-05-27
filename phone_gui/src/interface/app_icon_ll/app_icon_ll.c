@@ -7,6 +7,7 @@ typedef struct {
     lv_obj_t *obj;
 } app_icon_node_t;
 
+static app_icon_node_t *icon_ll_search(lv_ll_t *ll,  int id);
 static void event_cb(lv_event_t *e);
 
 app_icon_ll_t *app_icon_ll_create(
@@ -76,7 +77,31 @@ void app_icon_ll_add(app_icon_ll_t *icon_ll, uint8_t id, const lv_img_dsc_t *src
     node->id = id;
     node->obj = obj;
 
-    lv_obj_add_event_cb(img, event_cb, LV_EVENT_CLICKED, id);
+    lv_obj_add_event_cb(img, event_cb, LV_EVENT_CLICKED, (void *)id);
+}
+
+void app_icon_ll_del(app_icon_ll_t *icon_ll, uint8_t id)
+{
+    app_icon_node_t *node = icon_ll_search(&icon_ll->ll, id);
+    if (node == NULL) {
+        LV_LOG_WARN("icon node doesn't exist");
+        return;
+    }
+
+    lv_obj_del(node->obj);
+    _lv_ll_remove(&icon_ll->ll, node);
+}
+
+static app_icon_node_t *icon_ll_search(lv_ll_t *ll,  int id)
+{
+    app_icon_node_t *node = _lv_ll_get_tail(ll);
+    while (node != NULL) {
+        if (node->id == id)
+            break;
+        node = _lv_ll_get_prev(ll, node);
+    }
+
+    return node;
 }
 
 static void event_cb(lv_event_t *e)

@@ -20,8 +20,10 @@ public:
     /* Wallpaper */
     void setWallpaperImage(const lv_img_dsc_t *src);
     void setWallpaperColor(lv_color_t color);
-#if STATUSBAR_EN
     /* Status bar */
+#if STATUSBAR_EN
+    void showStatusBar(void);
+    void hideStatusBar(void);
 #if STATUSBAR_AREA_LEFT_EN
     void setWifiLevel(phone_gui_wifi_t level);
 #endif

@@ -120,6 +120,14 @@ void status_bar_init(lv_obj_t *parent)
     INTERFACE_TRACE("status bar init finished");
 }
 
+void status_bar_show(bool flag)
+{
+    if (flag)
+        lv_obj_clear_flag(_obj, LV_OBJ_FLAG_HIDDEN);
+    else
+        lv_obj_add_flag(_obj, LV_OBJ_FLAG_HIDDEN);
+}
+
 void status_bar_add_icon(status_bar_area_t area, int id, const lv_img_src_t **state_src, uint8_t state_num)
 {
     if (!area_icon_count_check(area)) {

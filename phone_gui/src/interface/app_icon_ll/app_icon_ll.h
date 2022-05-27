@@ -23,6 +23,7 @@ app_icon_ll_t *app_icon_ll_create(
 );
 
 void app_icon_ll_add(app_icon_ll_t *icon_ll, uint8_t id, const lv_img_dsc_t *src);
+void app_icon_ll_del(app_icon_ll_t *icon_ll, uint8_t id);
 
 #ifdef __cplusplus
 }

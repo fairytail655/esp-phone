@@ -25,7 +25,9 @@ void PhoneGui::begin(void)
 #if NAVIGATEBAR_EN
     navigate_bar_init(INTERFACE_EVENT_OBJ);
 #endif
+#if SHORTCUTBAR_EN
     shortcut_bar_init(INTERFACE_EVENT_OBJ);
+#endif
 }
 
 void PhoneGui::setWallpaperImage(const lv_img_dsc_t *src)
@@ -39,6 +41,16 @@ void PhoneGui::setWallpaperColor(lv_color_t color)
 }
 
 #if STATUSBAR_EN
+void PhoneGui::showStatusBar(void)
+{
+    status_bar_show(true);
+}
+
+void PhoneGui::hideStatusBar(void)
+{
+    status_bar_show(false);
+}
+
 #if STATUSBAR_AREA_LEFT_EN
 void PhoneGui::setWifiLevel(phone_gui_wifi_t level)
 {
@@ -100,11 +112,11 @@ void PhoneGui::disableBatteryCharge(void)
 #if NAVIGATEBAR_EN
 void PhoneGui::showNavigateBar(void)
 {
-    navigate_bar_show();
+    navigate_bar_show(true);
 }
 
 void PhoneGui::hideNavigateBar(void)
 {
-    navigate_bar_hide();
+    navigate_bar_show(false);
 }
 #endif
