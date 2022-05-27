@@ -5,8 +5,6 @@
 
 lv_obj_t *_percent_label = NULL;
 status_icon_t *_icon = NULL;
-uint8_t _percent_num = 100;
-bool _charge_flag = false;
 
 void status_battery_init(lv_obj_t *parent)
 {
@@ -47,29 +45,21 @@ void status_battery_init(lv_obj_t *parent)
         status_icon_set_src(_icon, i + 1, battery_img[i]);
     }
 
-    status_battery_set_percent(100);
+    status_battery_set_percent(100, false);
 
     INTERFACE_TRACE("status battery init finished");
 }
 
-void status_battery_set_percent(uint8_t percent)
+void status_battery_set_percent(uint8_t percent, bool flag)
 {
     percent = (percent < 1) ? 1 : percent;
     percent = (percent > 100) ? 100 : percent;
     lv_label_set_text_fmt(_percent_label, "%d%%", percent);
-    if (!_charge_flag)
+    if (!flag)
         status_icon_set_state(_icon, (percent + 19) / 20);
 }
 
-void status_battery_set_charge(bool flag)
+void status_battery_set_charge(void)
 {
-    if (flag != _charge_flag) {
-        _charge_flag = flag;
-        if (flag) {
-            status_icon_set_state(_icon, 6);
-        }
-        else {
-            status_icon_set_state(_icon, (_percent_num + 19) / 20);
-        }
-    }
+    status_icon_set_state(_icon, 6);
 }

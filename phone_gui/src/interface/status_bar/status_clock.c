@@ -3,7 +3,6 @@
 #include "../../utils/utils.h"
 #include "status_clock.h"
 
-static uint8_t _day = 0, _hour = 12, _min = 0, _sec = 0;
 static lv_obj_t *_label_day, *_label_hour, *_label_min, *_label_sec;
 static const char *_day_str[] = {
     "Monday",
@@ -42,7 +41,6 @@ void status_clock_init(lv_obj_t *parent)
     // Day of week area
     _label_day = lv_label_create(obj);
     lv_obj_set_style_bg_opa(_label_day, LV_OPA_TRANSP, 0);
-    lv_label_set_text(_label_day, _day_str[_day]);
 
     // Time area
     lv_obj_t *time = lv_obj_create(obj);
@@ -57,7 +55,6 @@ void status_clock_init(lv_obj_t *parent)
     // Hour
     _label_hour = lv_label_create(time);
     lv_obj_set_style_bg_opa(_label_hour, LV_OPA_TRANSP, 0);
-    lv_label_set_text_fmt(_label_hour, "%02d", _hour);
     // Dot
     lv_obj_t *label_dot_1 = lv_label_create(time);
     lv_obj_set_style_bg_opa(label_dot_1, LV_OPA_TRANSP, 0);
@@ -65,7 +62,6 @@ void status_clock_init(lv_obj_t *parent)
     // Minute
     _label_min = lv_label_create(time);
     lv_obj_set_style_bg_opa(_label_min, LV_OPA_TRANSP, 0);
-    lv_label_set_text_fmt(_label_min, "%02d", _min);
 #if STATUSBAR_CLOCK_SECOND_EN
     // Dot
     lv_obj_t *label_dot_2 = lv_label_create(time);
@@ -74,57 +70,60 @@ void status_clock_init(lv_obj_t *parent)
     // Second
     _label_sec = lv_label_create(time);
     lv_obj_set_style_bg_opa(_label_sec, LV_OPA_TRANSP, 0);
-    lv_label_set_text_fmt(_label_sec, "%02d", _sec);
 #endif
 
     INTERFACE_TRACE("status_clock init finished");
 }
 
-void status_clock_set_time(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
+void status_clock_set_day(uint8_t day)
 {
     if ((day > 7) || (day < 1)) {
         LV_LOG_WARN("day [%d] out of range", day);
         return;
     }
-    else if (_day != day) {
-        _day = day;
+    else {
         lv_label_set_text_fmt(_label_day, "%s", _day_str[day - 1]);
     }
+}
 
+void status_clock_set_hour(uint8_t hour)
+{
 #if STATUSBAR_CLOCK_FORMAT_24
-    if (_hour > 23) {
+    if (hour > 23) {
 #else
-    if (_hour > 12) {
+    if (hour > 12) {
 #endif
-        LV_LOG_WARN("hour [%d] out of range", _hour);
+        LV_LOG_WARN("hour [%d] out of range", hour);
         return;
     }
-    else if (_hour != hour) {
-        _hour = hour;
+    else {
+#if STATUSBAR_CLOCK_FORMAT_24
+        hour = (hour > 12) ? hour - 12 : hour;
         lv_label_set_text_fmt(_label_hour, "%02d", hour);
+#else
+        lv_label_set_text_fmt(_label_hour, "%02d", hour);
+#endif
     }
+}
 
-    if (_min > 59) {
-        LV_LOG_WARN("minute [%d] out of range", _min);
+void status_clock_set_min(uint8_t min)
+{
+    if (min > 59) {
+        LV_LOG_WARN("minute [%d] out of range", min);
         return;
     }
-    if (_min != min) {
-        _min = min;
+    else {
         lv_label_set_text_fmt(_label_min, "%02d", min);
     }
+}
 
-#if STATUSBAR_CLOCK_SECOND_EN
-    if (_sec > 59) {
-        LV_LOG_WARN("minute [%d] out of range", _sec);
+void status_clock_set_sec(uint8_t sec)
+{
+    if (sec > 59) {
+        LV_LOG_WARN("second [%d] out of range", sec);
         return;
     }
-    if (_sec != sec) {
-        _sec = sec;
+    else {
         lv_label_set_text_fmt(_label_sec, "%02d", sec);
     }
-#else
-    (void)_sec;
-#endif
-
-    INTERFACE_TRACE("status_clock set time: %s-%02d:%02d:%02d", _day_str[day - 1], hour, min, sec);
 }

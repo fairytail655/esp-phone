@@ -8,7 +8,10 @@ extern "C" {
 #endif
 
 void status_clock_init(lv_obj_t *parent);
-void status_clock_set_time(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec);
+void status_clock_set_day(uint8_t day);
+void status_clock_set_hour(uint8_t hour);
+void status_clock_set_min(uint8_t min);
+void status_clock_set_sec(uint8_t sec);
 
 #ifdef __cplusplus
 }

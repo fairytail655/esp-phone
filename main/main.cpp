@@ -21,11 +21,6 @@ PhoneGui gui;
 
 void timer_cb(struct _lv_timer_t *)
 {
-    static phone_gui_battery_t battery = PHONE_GUI_BAT_EMPTY;
-    battery = (battery == PHONE_GUI_BAT_FULL + 1) ? PHONE_GUI_BAT_EMPTY : battery;
-
-    gui.setBatteryLevel(battery);
-    battery = (phone_gui_battery_t)(battery + 1);
 }
 
 int main(int argc, char **argv)
@@ -40,9 +35,8 @@ int main(int argc, char **argv)
     hal_init();
 
     gui.begin();
-    gui.setBatteryCharge(true);
 
-    lv_timer_create(timer_cb, 2000, NULL);
+    lv_timer_create(timer_cb, 500, NULL);
 
     while(1) {
         lv_timer_handler();

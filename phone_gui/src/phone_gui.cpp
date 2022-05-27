@@ -3,7 +3,12 @@
 
 PhoneGui::PhoneGui(void)
 {
-
+    _day = 1;
+    _hour = 12;
+    _min = 0;
+    _sec = 0;
+    _battery_percent = 100;
+    _battery_charging = false;
 }
 
 PhoneGui::~PhoneGui(void)
@@ -27,7 +32,6 @@ void PhoneGui::setWallpaperColor(lv_color_t color)
 }
 
 #if STATUSBAR_EN
-
 #if STATUSBAR_AREA_LEFT_EN
 void PhoneGui::setWifiLevel(phone_gui_wifi_t level)
 {
@@ -38,23 +42,50 @@ void PhoneGui::setWifiLevel(phone_gui_wifi_t level)
 #if STATUSBAR_CLOCK_EN
 void PhoneGui::setClockTime(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
 {
-    status_bar_set_clock_time(day, hour, min, sec);
+    if (_day != day) {
+        _day = day;
+        status_clock_set_day(day);
+    }
+    if (_hour != hour) {
+        _hour = hour;
+        status_clock_set_hour(hour);
+    }
+    if (_min != min) {
+        _min = min;
+        status_clock_set_min(min);
+    }
+#if STATUSBAR_CLOCK_SECOND_EN
+    if (_sec != sec) {
+        _sec = sec;
+        status_clock_set_day(sec);
+    }
+#else
+    (void)sec;
+#endif
 }
 #endif
 
 void PhoneGui::setBatteryPercent(uint8_t percent)
 {
-    status_bar_set_battery_percent(percent);
+    if (percent != _battery_percent) {
+        _battery_percent = percent;
+        status_battery_set_percent(percent, _battery_charging);
+    }
 }
 
-void PhoneGui::setBatteryLevel(phone_gui_battery_t level)
+void PhoneGui::enableBatteryCharge(void)
 {
-    status_bar_set_battery_percent(((uint8_t)level + 1) * 20);
+    if (!_battery_charging) {
+        _battery_charging = true;
+        status_battery_set_charge();
+    }
 }
 
-void PhoneGui::setBatteryCharge(bool flag)
+void PhoneGui::disableBatteryCharge(void)
 {
-    status_bar_set_battery_charge(flag);
+    if (_battery_charging) {
+        _battery_charging = false;
+        status_battery_set_percent(_battery_percent, _battery_charging);
+    }
 }
-
 #endif

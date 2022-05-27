@@ -2,8 +2,6 @@
 #include "../interface_conf.h"
 #include "status_icon.h"
 #include "status_bar.h"
-#include "status_clock.h"
-#include "status_battery.h"
 
 #define ICON_WIFI_ID        -1
 
@@ -110,6 +108,12 @@ void status_bar_init(lv_obj_t *parent)
 #if STATUSBAR_CLOCK_EN
     // Init clock
     status_clock_init(_area_middle);
+    status_clock_set_day(1);
+    status_clock_set_hour(12);
+    status_clock_set_min(0);
+#if STATUSBAR_CLOCK_SECOND_EN
+    status_clock_set_sec(0);
+#endif
 #endif
 #endif
 
@@ -186,21 +190,6 @@ void status_bar_set_wifi_state(status_bar_wifi_state_t state)
     }
 
     status_icon_set_state(node->icon, state);
-}
-
-void status_bar_set_clock_time(uint8_t day, uint8_t hour, uint8_t min, uint8_t sec)
-{
-    status_clock_set_time(day, hour, min, sec);
-}
-
-void status_bar_set_battery_percent(uint8_t percent)
-{
-    status_battery_set_percent(percent);
-}
-
-void status_bar_set_battery_charge(bool flag)
-{
-    status_battery_set_charge(flag);
 }
 
 static void wifi_icon_init(void)

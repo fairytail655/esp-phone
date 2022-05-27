@@ -8,8 +8,8 @@ extern "C" {
 #endif
 
 void status_battery_init(lv_obj_t *parent);
-void status_battery_set_percent(uint8_t percent);
-void status_battery_set_charge(bool flag);
+void status_battery_set_percent(uint8_t percent, bool flag);
+void status_battery_set_charge(void);
 
 #ifdef __cplusplus
 }
