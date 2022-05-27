@@ -40,6 +40,7 @@ void navigate_bar_init(lv_obj_t *parent)
 
     // Left button
     lv_obj_t *btn_left = lv_btn_create(_bar);
+    lv_obj_remove_style_all(btn_left);
     obj_conf_style(btn_left, &style);
 	LV_IMG_DECLARE(img_navigate_left);
 	lv_obj_set_style_bg_img_src(btn_left, &img_navigate_left, 0);
@@ -50,6 +51,7 @@ void navigate_bar_init(lv_obj_t *parent)
 
     // Middle button
     lv_obj_t *btn_middle = lv_btn_create(_bar);
+    lv_obj_remove_style_all(btn_middle);
     obj_conf_style(btn_middle, &style);
 	LV_IMG_DECLARE(img_navigate_middle);
 	lv_obj_set_style_bg_img_src(btn_middle, &img_navigate_middle, 0);
@@ -60,6 +62,7 @@ void navigate_bar_init(lv_obj_t *parent)
 
     // Right button
     lv_obj_t *btn_right = lv_btn_create(_bar);
+    lv_obj_remove_style_all(btn_right);
     obj_conf_style(btn_right, &style);
 	LV_IMG_DECLARE(img_navigate_right);
 	lv_obj_set_style_bg_img_src(btn_right, &img_navigate_right, 0);
