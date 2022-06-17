@@ -12,23 +12,9 @@
 
 #include <time.h>
 #include <sys/time.h>
-#include "phone_gui.h"
 
 static void hal_init(void);
 static int tick_thread(void *data);
-
-PhoneGui gui;
-
-void timer_cb(struct _lv_timer_t *)
-{
-    struct timeval tv;
-    struct timezone tz;
-    struct tm *p;
-
-    gettimeofday(&tv, &tz);
-    p = localtime(&tv.tv_sec);
-    gui.setClockTime(p->tm_wday, p->tm_hour, p->tm_min, p->tm_sec);
-}
 
 int main(int argc, char **argv)
 {
@@ -40,10 +26,6 @@ int main(int argc, char **argv)
 
     /*Initialize the HAL (display, input devices, tick) for LVGL*/
     hal_init();
-
-    gui.begin();
-
-    lv_timer_create(timer_cb, 500, NULL);
 
     while(1) {
         lv_timer_handler();
