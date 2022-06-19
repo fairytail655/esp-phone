@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 /* Utils */
-#define OBJ_CONF_BORDER_EN                  0
+#define OBJ_CONF_BORDER_EN                  1
 
 /* Log */
 #define LOG_TRACE_GUI                       1
