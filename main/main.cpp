@@ -10,8 +10,7 @@
 #include "lv_drivers/indev/keyboard.h"
 #include "lv_drivers/indev/mousewheel.h"
 
-#include <time.h>
-#include <sys/time.h>
+#include "interface/interface.h"
 
 static void hal_init(void);
 static int tick_thread(void *data);
@@ -26,6 +25,8 @@ int main(int argc, char **argv)
 
     /*Initialize the HAL (display, input devices, tick) for LVGL*/
     hal_init();
+
+    interface_init();
 
     while(1) {
         lv_timer_handler();

@@ -38,7 +38,7 @@ CFLAGS_CPP 			:= -O0 -g $(WARNINGS_CPP)
 DEFINES				:= -D SIMULATOR=1 -D LV_BUILD_TEST=0
 
 # Include simulator inc folder first so lv_conf.h from custom UI can be used instead
-INC 				:= -I./ -I./lvgl/ -I./phone_gui/src
+INC 				:= -I./ -I./lvgl/ -I./interface -I./phone_gui/src
 LDLIBS	 			:= -lSDL2 -lm
 BIN 				:= $(BIN_DIR)/demo
 
