@@ -32,15 +32,21 @@ void status_clock_init(lv_obj_t *parent)
     obj_conf_style(obj, &style);
     // Config layout
     lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
+#if STATUS_BAR_CLOCK_SECOND_EN
     lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+#else
+    lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+#endif
     lv_obj_set_style_pad_left(obj, 5, 0);
     lv_obj_set_style_pad_column(obj, 5, 0);
     lv_obj_set_style_text_font(obj, STATUS_BAR_CLOCK_FONT, 0);
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
+#if STATUS_BAR_CLOCK_DATE_EN
     // Day of week area
     _label_day = lv_label_create(obj);
     lv_obj_set_style_bg_opa(_label_day, LV_OPA_TRANSP, 0);
+#endif
 
     // Time area
     lv_obj_t *time = lv_obj_create(obj);

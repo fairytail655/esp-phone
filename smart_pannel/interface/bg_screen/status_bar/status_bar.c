@@ -108,7 +108,9 @@ void status_bar_init(lv_obj_t *parent)
 #if STATUS_BAR_CLOCK_EN
     // Init clock
     status_clock_init(_area_middle);
+#if STATUS_BAR_CLOCK_DATE_EN
     status_clock_set_day(1);
+#endif
     status_clock_set_hour(12);
     status_clock_set_min(0);
 #if STATUS_BAR_CLOCK_SECOND_EN
