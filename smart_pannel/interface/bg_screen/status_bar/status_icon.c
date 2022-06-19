@@ -1,5 +1,5 @@
-#include "../../utils/utils.h"
-#include "../interface_conf.h"
+#include "utils/utils.h"
+#include "interface/interface_conf.h"
 #include "status_icon.h"
 
 status_icon_t *status_icon_create(uint8_t state_num, lv_obj_t *parent)
@@ -7,8 +7,8 @@ status_icon_t *status_icon_create(uint8_t state_num, lv_obj_t *parent)
     // Create container
     lv_obj_t *obj = lv_obj_create(parent);
     obj_conf_style_t style = {
-        .width = STATUSBAR_ICON_SIZE,
-        .height = STATUSBAR_ICON_SIZE,
+        .width = STATUS_BAR_ICON_SIZE,
+        .height = STATUS_BAR_ICON_SIZE,
         .pos_flag = OBJ_POS_FLAG_NONE,
         .radius = 0,
         .border_width = 0,
@@ -54,10 +54,10 @@ void status_icon_set_src(status_icon_t *icon, uint8_t state_index, const lv_img_
 
     lv_obj_t *img = icon->_img[state_index - 1];
     lv_img_set_src(img, src);
-    if ((src->header.h != STATUSBAR_ICON_SIZE) && (src->header.w != STATUSBAR_ICON_SIZE)) {
+    if ((src->header.h != STATUS_BAR_ICON_SIZE) && (src->header.w != STATUS_BAR_ICON_SIZE)) {
         // Calculate the multiple of the size between the target and the image.
-        float h_factor = (float)(STATUSBAR_ICON_SIZE) / src->header.h;
-        float w_factor = (float)(STATUSBAR_ICON_SIZE) / src->header.w;
+        float h_factor = (float)(STATUS_BAR_ICON_SIZE) / src->header.h;
+        float w_factor = (float)(STATUS_BAR_ICON_SIZE) / src->header.w;
         // Scale the image to a suitable size.
         // So you don’t have to consider the size of the source image.
         if (h_factor < w_factor) {

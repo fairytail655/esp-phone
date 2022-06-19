@@ -1,7 +1,8 @@
 #include "lvgl.h"
-#include "bg_screen/bg_board/bg_board.h"
+#include "interface/interface.h"
+#include "smart_pannel.h"
 
-void interface_init(void)
+void smart_pannel_init(void)
 {
     lv_obj_t *bg_scr = lv_scr_act();
 

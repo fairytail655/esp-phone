@@ -1,4 +1,4 @@
-#include "../../ui_conf.h"
+#include "interface/interface_conf.h"
 #include "bg_board.h"
 
 static lv_obj_t *bg_board_obj = NULL;

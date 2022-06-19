@@ -1,8 +1,6 @@
 #ifndef STATUS_ICON_H
 #define STATUS_ICON_H
 
-#include "../../phone_gui_conf.h"
-
 #include <stdint.h>
 #include "lvgl.h"
 

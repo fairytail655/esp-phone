@@ -1,5 +1,5 @@
-#include "../../utils/utils.h"
-#include "../interface_conf.h"
+#include "utils/utils.h"
+#include "interface/interface_conf.h"
 #include "status_icon.h"
 #include "status_bar.h"
 
@@ -21,10 +21,10 @@ static lv_obj_t *_obj;
 static lv_obj_t *_area_left, *_area_right, *_area_middle;
 static uint16_t _area_left_width = 0, _area_right_width = 0;
 static lv_ll_t _icon_ll;
-#if STATUSBAR_AREA_LEFT_EN
+#if STATUS_BAR_AREA_LEFT_EN
 static uint8_t _area_left_icon_count = 0, _area_left_icon_num_max;
 #endif
-#if STATUSBAR_AREA_RIGHT_EN
+#if STATUS_BAR_AREA_RIGHT_EN
 static uint8_t _area_right_icon_count = 0, _area_right_icon_num_max;
 #endif
 static const char *_area_str[] = {"left", "middle", "right"};
@@ -33,14 +33,14 @@ void status_bar_init(lv_obj_t *parent)
 {
     // Main area
     obj_conf_style_t style = {
-        .width = STATUSBAR_WIDTH,
-        .height = STATUSBAR_HEIGHT,
+        .width = STATUS_BAR_WIDTH,
+        .height = STATUS_BAR_HEIGHT,
         .pos_flag = OBJ_POS_FLAG_ALIGN,
         .align = LV_ALIGN_TOP_MID,
         .border_width = 0,
         .pad_all = 0,
         .radius = 0,
-        .bg_color = STATUSBAR_BG_COLOR,
+        .bg_color = STATUS_BAR_BG_COLOR,
         .bg_opa = LV_OPA_COVER,
     };
     _obj = lv_obj_create(parent);
@@ -50,53 +50,53 @@ void status_bar_init(lv_obj_t *parent)
     // Initialize contents of status_bar
     _lv_ll_init(&_icon_ll, sizeof(icon_node_t));
 
-#if STATUSBAR_AREA_LEFT_EN
+#if STATUS_BAR_AREA_LEFT_EN
     // Left area
     _area_left = lv_obj_create(_obj);
-    style.width = STATUSBAR_WIDTH * STATUSBAR_AREA_LEFT_PERCENT / 100;
+    style.width = STATUS_BAR_WIDTH * STATUS_BAR_AREA_LEFT_PERCENT / 100;
     style.pos_flag = OBJ_POS_FLAG_ALIGN_OFFSET;
     style.align = LV_ALIGN_LEFT_MID;
-    style.x_offset = STATUSBAR_AREA_OFFSET;
+    style.x_offset = STATUS_BAR_AREA_OFFSET;
     style.bg_opa = LV_OPA_TRANSP;
     obj_conf_style(_area_left, &style);
     _area_left_width = style.width;
-    _area_left_icon_num_max = style.width / (STATUSBAR_ICON_SIZE + STATUSBAR_AREA_PAD);
+    _area_left_icon_num_max = style.width / (STATUS_BAR_ICON_SIZE + STATUS_BAR_AREA_PAD);
     INTERFACE_TRACE("left area can contain %d icons", _area_left_icon_num_max);
     // Config layout
     lv_obj_set_flex_flow(_area_left, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(_area_left, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_style_pad_column(_area_left, STATUSBAR_AREA_PAD, 0);
+    lv_obj_set_style_pad_column(_area_left, STATUS_BAR_AREA_PAD, 0);
     lv_obj_clear_flag(_area_left, LV_OBJ_FLAG_SCROLLABLE);
     // Init wifi
     wifi_icon_init();
 #endif
 
-#if STATUSBAR_AREA_RIGHT_EN
+#if STATUS_BAR_AREA_RIGHT_EN
     // Right area
     _area_right = lv_obj_create(_obj);
-    style.width = STATUSBAR_WIDTH * STATUSBAR_AREA_RIGHT_PERCENT / 100;
+    style.width = STATUS_BAR_WIDTH * STATUS_BAR_AREA_RIGHT_PERCENT / 100;
     style.pos_flag = OBJ_POS_FLAG_ALIGN_OFFSET;
     style.align = LV_ALIGN_RIGHT_MID;
-    style.x_offset = -STATUSBAR_AREA_OFFSET;
+    style.x_offset = -STATUS_BAR_AREA_OFFSET;
     style.bg_opa = LV_OPA_TRANSP;
     obj_conf_style(_area_right, &style);
     _area_right_width = style.width;
-    _area_right_icon_num_max = style.width / (STATUSBAR_ICON_SIZE + STATUSBAR_AREA_PAD);
+    _area_right_icon_num_max = style.width / (STATUS_BAR_ICON_SIZE + STATUS_BAR_AREA_PAD);
     INTERFACE_TRACE("left area can contain %d icons", _area_right_icon_num_max);
     // Config layout
     lv_obj_set_flex_flow(_area_right, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(_area_right, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_style_pad_column(_area_right, STATUSBAR_AREA_PAD, 0);
+    lv_obj_set_style_pad_column(_area_right, STATUS_BAR_AREA_PAD, 0);
     lv_obj_clear_flag(_area_right, LV_OBJ_FLAG_SCROLLABLE);
     // Init battery
     status_battery_init(_area_right);
 #endif
 
-#if STATUSBAR_AREA_MID_EN
+#if STATUS_BAR_AREA_MID_EN
     // Middle area
     _area_middle = lv_obj_create(_obj);
     int width_max = _area_left_width > _area_right_width ? _area_left_width : _area_right_width;
-    style.width = STATUSBAR_WIDTH - (width_max + STATUSBAR_AREA_OFFSET) * 2;
+    style.width = STATUS_BAR_WIDTH - (width_max + STATUS_BAR_AREA_OFFSET) * 2;
     style.pos_flag = OBJ_POS_FLAG_ALIGN;
     style.align = LV_ALIGN_CENTER;
     style.bg_opa = LV_OPA_TRANSP;
@@ -105,13 +105,13 @@ void status_bar_init(lv_obj_t *parent)
     lv_obj_set_flex_flow(_area_middle, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(_area_middle, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_clear_flag(_area_middle, LV_OBJ_FLAG_SCROLLABLE);
-#if STATUSBAR_CLOCK_EN
+#if STATUS_BAR_CLOCK_EN
     // Init clock
     status_clock_init(_area_middle);
     status_clock_set_day(1);
     status_clock_set_hour(12);
     status_clock_set_min(0);
-#if STATUSBAR_CLOCK_SECOND_EN
+#if STATUS_BAR_CLOCK_SECOND_EN
     status_clock_set_sec(0);
 #endif
 #endif
@@ -137,17 +137,17 @@ void status_bar_add_icon(status_bar_area_t area, int id, const lv_img_src_t **st
 
     status_icon_t *icon;
     switch (area) {
-#if STATUSBAR_AREA_LEFT_EN
+#if STATUS_BAR_AREA_LEFT_EN
         case STATUS_BAR_AREA_LEFT:
             icon = status_icon_create(state_num, _area_left);
             break;
 #endif
-#if STATUSBAR_AREA_RIGHT_EN
+#if STATUS_BAR_AREA_RIGHT_EN
         case STATUS_BAR_AREA_RIGHT:
             icon = status_icon_create(state_num, _area_right);
             break;
 #endif
-#if STATUSBAR_AREA_MID_EN
+#if STATUS_BAR_AREA_MID_EN
         // case STATUS_BAR_AREA_MIDDLE:
         //     icon = status_icon_create(state_num, _area_middle);
         //     break;
@@ -236,13 +236,13 @@ static icon_node_t *icon_ll_search(int id, status_bar_area_t *area)
 static void area_icon_count_inc(status_bar_area_t area)
 {
     switch (area) {
-#if STATUSBAR_AREA_LEFT_EN
+#if STATUS_BAR_AREA_LEFT_EN
         case STATUS_BAR_AREA_LEFT:
             if (_area_left_icon_count < _area_left_icon_num_max)
                 _area_left_icon_count++;
             break;
 #endif
-#if STATUSBAR_AREA_RIGHT_EN
+#if STATUS_BAR_AREA_RIGHT_EN
         case STATUS_BAR_AREA_RIGHT:
             if (_area_right_icon_count < _area_right_icon_num_max)
                 _area_right_icon_count++;
@@ -257,13 +257,13 @@ static void area_icon_count_inc(status_bar_area_t area)
 static void area_icon_count_dec(status_bar_area_t area)
 {
     switch (area) {
-#if STATUSBAR_AREA_LEFT_EN
+#if STATUS_BAR_AREA_LEFT_EN
         case STATUS_BAR_AREA_LEFT:
             if (_area_left_icon_count > 0)
                 _area_left_icon_count--;
             break;
 #endif
-#if STATUSBAR_AREA_RIGHT_EN
+#if STATUS_BAR_AREA_RIGHT_EN
         case STATUS_BAR_AREA_RIGHT:
             if (_area_right_icon_count > 0)
                 _area_right_icon_count--;
@@ -279,13 +279,13 @@ static bool area_icon_count_check(status_bar_area_t area)
 {
     bool res = false;
     switch (area) {
-#if STATUSBAR_AREA_LEFT_EN
+#if STATUS_BAR_AREA_LEFT_EN
         case STATUS_BAR_AREA_LEFT:
             if (_area_left_icon_count < _area_left_icon_num_max)
                 res = true;
             break;
 #endif
-#if STATUSBAR_AREA_RIGHT_EN
+#if STATUS_BAR_AREA_RIGHT_EN
         case STATUS_BAR_AREA_RIGHT:
             if (_area_right_icon_count < _area_right_icon_num_max)
                 res = true;

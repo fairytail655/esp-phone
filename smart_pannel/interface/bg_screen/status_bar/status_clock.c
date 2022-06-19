@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "../interface_conf.h"
-#include "../../utils/utils.h"
+#include "interface/interface_conf.h"
+#include "utils/utils.h"
 #include "status_clock.h"
 
 static lv_obj_t *_label_day, *_label_hour, *_label_min, *_label_sec;
@@ -35,7 +35,7 @@ void status_clock_init(lv_obj_t *parent)
     lv_obj_set_flex_align(obj, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_left(obj, 5, 0);
     lv_obj_set_style_pad_column(obj, 5, 0);
-    lv_obj_set_style_text_font(obj, STATUSBAR_CLOCK_FONT, 0);
+    lv_obj_set_style_text_font(obj, STATUS_BAR_CLOCK_FONT, 0);
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
     // Day of week area
@@ -62,7 +62,7 @@ void status_clock_init(lv_obj_t *parent)
     // Minute
     _label_min = lv_label_create(time);
     lv_obj_set_style_bg_opa(_label_min, LV_OPA_TRANSP, 0);
-#if STATUSBAR_CLOCK_SECOND_EN
+#if STATUS_BAR_CLOCK_SECOND_EN
     // Dot
     lv_obj_t *label_dot_2 = lv_label_create(time);
     lv_obj_set_style_bg_opa(label_dot_2, LV_OPA_TRANSP, 0);
@@ -90,7 +90,7 @@ void status_clock_set_day(uint8_t day)
 
 void status_clock_set_hour(uint8_t hour)
 {
-#if STATUSBAR_CLOCK_FORMAT_24
+#if STATUS_BAR_CLOCK_FORMAT_24
     if (hour > 23) {
 #else
     if (hour > 12) {
@@ -99,7 +99,7 @@ void status_clock_set_hour(uint8_t hour)
         return;
     }
     else {
-#if STATUSBAR_CLOCK_FORMAT_24
+#if STATUS_BAR_CLOCK_FORMAT_24
         hour = (hour > 12) ? hour - 12 : hour;
         lv_label_set_text_fmt(_label_hour, "%02d", hour);
 #else

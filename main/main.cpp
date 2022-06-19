@@ -10,7 +10,7 @@
 #include "lv_drivers/indev/keyboard.h"
 #include "lv_drivers/indev/mousewheel.h"
 
-#include "interface/interface.h"
+#include "smart_pannel/smart_pannel.h"
 
 static void hal_init(void);
 static int tick_thread(void *data);
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     /*Initialize the HAL (display, input devices, tick) for LVGL*/
     hal_init();
 
-    interface_init();
+    smart_pannel_init();
 
     while(1) {
         lv_timer_handler();

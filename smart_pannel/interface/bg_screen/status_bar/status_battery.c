@@ -1,5 +1,5 @@
-#include "../interface_conf.h"
-#include "../../utils/utils.h"
+#include "interface/interface_conf.h"
+#include "utils/utils.h"
 #include "status_icon.h"
 #include "status_battery.h"
 
@@ -27,7 +27,7 @@ void status_battery_init(lv_obj_t *parent)
 
     // Display percent
     _percent_label = lv_label_create(obj);
-    lv_obj_set_style_text_font(_percent_label, STATUSBAR_BATTERY_FONT, 0);
+    lv_obj_set_style_text_font(_percent_label, STATUS_BAR_BATTERY_FONT, 0);
 
     // Display state icon
     LV_IMG_DECLARE(img_battery_empty);
@@ -65,5 +65,5 @@ void status_battery_set_charge(void)
 {
     status_icon_set_state(_icon, 6);
 
-    INTERFACE_TRACE("status battery set charge", flag);
+    INTERFACE_TRACE("status battery set charge");
 }
