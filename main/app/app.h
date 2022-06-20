@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "air_conditioner/ui_air_cond_bg.h"
+#include "air_conditioner/air_conditioner.h"
 
 #ifdef __cplusplus
 }

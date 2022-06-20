@@ -18,6 +18,7 @@ LV_FONT_DECLARE(my_font_bold_60);
 #define AIR_COND_SWITCH_Y               20
 #define AIR_COND_SWITCH_PAD             5
 #define AIR_COND_SWITCH_ICON_SIZE       48
+#define AIR_COND_SWITCH_OFFSET          40
 #define AIR_COND_SWITCH_ZOOM_PERCENT    130
 #define AIR_COND_COLOR_L_1              lv_color_hex(0x5cc4fc)
 #define AIR_COND_COLOR_D_1              lv_color_hex(0x0)

@@ -1,6 +1,6 @@
 #include "smart_pannel.h"
 #include "../app_conf.h"
-#include "ui_air_cond_bg.h"
+#include "ui_air_bg.h"
 
 static lv_obj_t *label_switch;
 static lv_obj_t *_label_on, *_label_off;
@@ -16,12 +16,15 @@ static lv_obj_t *_label_inc, *_label_dec;
 static lv_timer_t *_timer_btn;
 static bool _inc_flag = true;
 
+static lv_event_cb_t _more_click_event;
+
 static void img_switch_click_event(lv_event_t * e);
+static void img_more_click_event(lv_event_t * e);
 static void inc_btn_event(lv_event_t *e);
 static void dec_btn_event(lv_event_t *e);
 static void timer_btn_callback(struct _lv_timer_t *timer);
 
-void ui_air_cond_bg_init(lv_obj_t *obj)
+void ui_air_bg_init(lv_obj_t *obj)
 {
     /* Label "ON/OFF" */
     label_switch = lv_obj_create(obj);
@@ -89,6 +92,30 @@ void ui_air_cond_bg_init(lv_obj_t *obj)
     lv_obj_set_style_transform_zoom(_img_switch, LV_IMG_ZOOM_NONE, LV_STATE_DEFAULT);
     lv_obj_add_flag(_img_switch, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(_img_switch, img_switch_click_event, LV_EVENT_CLICKED, NULL);
+
+    /* More button */
+    temp = lv_img_create(obj);
+    lv_obj_refr_pos(_img_switch);
+    int y = lv_obj_get_y(_img_switch);
+    y += AIR_COND_SWITCH_ICON_SIZE + AIR_COND_SWITCH_OFFSET;
+    lv_obj_set_pos(temp, lv_obj_get_x(_img_switch), y);
+    LV_IMG_DECLARE(img_more);
+    lv_img_set_src(temp, &img_more);
+    // Calculate the multiple of the size between the target and the image.
+    h_factor = (float)AIR_COND_SWITCH_ICON_SIZE / img_switch_on.header.h;
+    w_factor = (float)AIR_COND_SWITCH_ICON_SIZE / img_switch_on.header.w;
+    // Scale the image to a suitable size.
+    // So you don’t have to consider the size of the source image.
+    if (h_factor < w_factor) {
+        lv_img_set_zoom(temp, (int)(h_factor * LV_IMG_ZOOM_NONE));
+    }
+    else {
+        lv_img_set_zoom(temp, (int)(w_factor * LV_IMG_ZOOM_NONE));
+    }
+    lv_obj_set_style_transform_zoom(temp, (int)(LV_IMG_ZOOM_NONE * AIR_COND_SWITCH_ZOOM_PERCENT / 100.0), LV_STATE_PRESSED);
+    lv_obj_set_style_transform_zoom(temp, LV_IMG_ZOOM_NONE, LV_STATE_DEFAULT);
+    lv_obj_add_flag(temp, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(temp, img_more_click_event, LV_EVENT_CLICKED, NULL);
 
     /* Indooor temperature label "26°C" */
     temp = lv_obj_create(obj);
@@ -178,7 +205,12 @@ void ui_air_cond_bg_init(lv_obj_t *obj)
     lv_obj_set_style_text_color(_label_target_symb, AIR_COND_COLOR_D_2, APP_STATE_OFF);
 }
 
-void ui_air_cond_bg_change_state(lv_state_t state)
+void ui_air_bg_register_callback_more_click(lv_event_cb_t func)
+{
+    _more_click_event = func;
+}
+
+void ui_air_bg_change_state(lv_state_t state)
 {
     if (state == _state)
         return;
@@ -226,7 +258,7 @@ void ui_air_cond_bg_change_state(lv_state_t state)
     _state = state;
 }
 
-void ui_air_cond_bg_indoor_temp_set(int temp)
+void ui_air_bg_indoor_temp_set(int temp)
 {
     if ((temp >= AIR_COND_TEMP_MAX) || (temp <= AIR_COND_TEMP_MIN))
         return;
@@ -236,7 +268,7 @@ void ui_air_cond_bg_indoor_temp_set(int temp)
     lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_cond_bg_indoor_temp_inc(void)
+void ui_air_bg_indoor_temp_inc(void)
 {
     if (_indoor_temperature >= AIR_COND_TEMP_MAX)
         return;
@@ -246,7 +278,7 @@ void ui_air_cond_bg_indoor_temp_inc(void)
     lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_cond_bg_indoor_temp_dec(void)
+void ui_air_bg_indoor_temp_dec(void)
 {
     if (_indoor_temperature <= AIR_COND_TEMP_MIN)
         return;
@@ -256,7 +288,7 @@ void ui_air_cond_bg_indoor_temp_dec(void)
     lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_cond_bg_target_temp_set(int temp)
+void ui_air_bg_target_temp_set(int temp)
 {
     if ((temp >= AIR_COND_TEMP_MAX) || (temp <= AIR_COND_TEMP_MIN))
         return;
@@ -266,7 +298,7 @@ void ui_air_cond_bg_target_temp_set(int temp)
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_cond_bg_target_temp_inc(void)
+void ui_air_bg_target_temp_inc(void)
 {
     if (_target_temperature >= AIR_COND_TEMP_MAX)
         return;
@@ -276,7 +308,7 @@ void ui_air_cond_bg_target_temp_inc(void)
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_cond_bg_target_temp_dec(void)
+void ui_air_bg_target_temp_dec(void)
 {
     if (_target_temperature <= AIR_COND_TEMP_MIN)
         return;
@@ -289,11 +321,17 @@ void ui_air_cond_bg_target_temp_dec(void)
 static void img_switch_click_event(lv_event_t * e)
 {
     if (_state == APP_STATE_ON) {
-        ui_air_cond_bg_change_state(APP_STATE_OFF);
+        ui_air_bg_change_state(APP_STATE_OFF);
     }
     else {
-        ui_air_cond_bg_change_state(APP_STATE_ON);
+        ui_air_bg_change_state(APP_STATE_ON);
     }
+}
+
+static void img_more_click_event(lv_event_t * e)
+{
+    if (_more_click_event)
+        _more_click_event(e);
 }
 
 static void inc_btn_event(lv_event_t *e)
@@ -301,7 +339,7 @@ static void inc_btn_event(lv_event_t *e)
     switch (lv_event_get_code(e)) {
         case LV_EVENT_PRESSED:
             _inc_flag = true;
-            ui_air_cond_bg_indoor_temp_inc();
+            ui_air_bg_indoor_temp_inc();
             lv_timer_reset(_timer_btn);
             lv_timer_resume(_timer_btn);
             break;
@@ -318,7 +356,7 @@ static void dec_btn_event(lv_event_t *e)
     switch (lv_event_get_code(e)) {
         case LV_EVENT_PRESSED:
             _inc_flag = false;
-            ui_air_cond_bg_indoor_temp_dec();
+            ui_air_bg_indoor_temp_dec();
             lv_timer_reset(_timer_btn);
             lv_timer_resume(_timer_btn);
             break;
@@ -333,9 +371,9 @@ static void dec_btn_event(lv_event_t *e)
 static void timer_btn_callback(struct _lv_timer_t *timer)
 {
     if (_inc_flag) {
-        ui_air_cond_bg_indoor_temp_inc();
+        ui_air_bg_indoor_temp_inc();
     }
     else {
-        ui_air_cond_bg_indoor_temp_dec();
+        ui_air_bg_indoor_temp_dec();
     }
 }

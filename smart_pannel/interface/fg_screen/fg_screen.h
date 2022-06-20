@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 void fg_screen_init(void);
+void fg_screen_register_callback_left_area(lv_event_cb_t func);
 void fg_screen_show(void);
 lv_obj_t *fg_screen_regiser_obj(void);
 void fg_screen_switch_obj(uint8_t index);

@@ -28,11 +28,7 @@ int main(int argc, char **argv)
     hal_init();
 
     smart_pannel_init();
-    app_t app_air_cond = {
-        .bg_screen_init = ui_air_cond_bg_init,
-        .fg_screen_init = NULL,
-    };
-    smart_pannel_install_app(&app_air_cond);
+    air_conditioner_init();
     smart_pannel_set_default_app(1);
 
     while(1) {

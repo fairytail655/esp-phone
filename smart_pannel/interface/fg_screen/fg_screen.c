@@ -10,6 +10,10 @@ static lv_obj_t *_app_area;
 static uint8_t _app_index = 0;
 static lv_ll_t _app_ll;
 
+static lv_event_cb_t _left_area_event_callback;
+
+static void left_area_event(lv_event_t *e);
+
 void fg_screen_init(void)
 {
     _scr = lv_obj_create(NULL);
@@ -31,14 +35,27 @@ void fg_screen_init(void)
     };
     obj_conf_style(_navigate_bar, &style);
     lv_obj_set_style_text_font(_navigate_bar, NAVIGATE_BAR_FONT, 0);
+    lv_obj_clear_flag(_navigate_bar, LV_OBJ_FLAG_SCROLLABLE);
 
     // Left Area
-    lv_obj_t *label = lv_label_create(_navigate_bar);
+    lv_obj_t *left_area = lv_obj_create(_navigate_bar);
+    style.width = LV_SIZE_CONTENT;
+    style.height = NAVIGATE_BAR_HEIGHT;
+    style.pos_flag = OBJ_POS_FLAG_ALIGN_OFFSET;
+    style.align = LV_ALIGN_LEFT_MID;
+    style.x_offset = NAVIGATE_BAR_LEFT_OFFSET_1;
+    style.y_offset = 0;
+    style.bg_opa = LV_OPA_TRANSP;
+    obj_conf_style(left_area, &style);
+    lv_obj_add_flag(left_area, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(left_area, left_area_event, LV_EVENT_CLICKED, NULL);
+    lv_obj_t *label = lv_label_create(left_area);
     lv_label_set_text(label, LV_SYMBOL_LEFT);
-    lv_obj_align(label, LV_ALIGN_LEFT_MID, NAVIGATE_BAR_LEFT_OFFSET_1, 0);
-    _label_left = lv_label_create(_navigate_bar);
+    lv_obj_align(label, LV_ALIGN_LEFT_MID, 0, 0);
+    _label_left = lv_label_create(left_area);
     lv_obj_align_to(_label_left, label, LV_ALIGN_OUT_RIGHT_MID, NAVIGATE_BAR_LEFT_OFFSET_2, 0);
-    lv_obj_add_flag(_label_left, LV_OBJ_FLAG_HIDDEN);
+    lv_label_set_text(_label_left, "haha");
+    // lv_obj_add_flag(_label_left, LV_OBJ_FLAG_HIDDEN);
 
     // Middle Area
     _label_mid = lv_label_create(_navigate_bar);
@@ -64,6 +81,11 @@ void fg_screen_init(void)
     lv_obj_set_style_img_recolor(_app_area, BG_BOARD_OBJ_COLOR_OFF, INTERFACE_STATE_OFF);
     lv_obj_set_style_img_recolor_opa(_app_area, BG_BOARD_OBJ_OPA_OFF, INTERFACE_STATE_OFF);
     _lv_ll_init(&_app_ll, sizeof(lv_obj_t *));
+}
+
+void fg_screen_register_callback_left_area(lv_event_cb_t func)
+{
+    _left_area_event_callback = func;
 }
 
 lv_obj_t *fg_screen_regiser_obj(void)
@@ -198,4 +220,10 @@ void fg_screen_set_switch(bool flag)
     }
     else
         lv_obj_clear_state(_switch, LV_STATE_CHECKED);
+}
+
+static void left_area_event(lv_event_t *e)
+{
+    if (_left_area_event_callback)
+        _left_area_event_callback(e);
 }
