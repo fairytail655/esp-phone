@@ -7,10 +7,23 @@ static lv_obj_t *_label_on, *_label_off;
 static lv_obj_t *_img_switch;
 static lv_state_t _state = APP_STATE_ON;
 
-static void img_switch_click_event(lv_event_t * e);
+static int _indoor_temperature = 26;
+static int _target_temperature = 23;
+static lv_obj_t *_label_indoor_temp, *_label_target_temp;
+static lv_obj_t *_label_indoor_symb, *_label_target_symb;
+static lv_obj_t *_btn_inc, *_btn_dec;
+static lv_obj_t *_label_inc, *_label_dec;
+static lv_timer_t *_timer_btn;
+static bool _inc_flag = true;
 
-void ui_air_cond_init(lv_obj_t *obj)
+static void img_switch_click_event(lv_event_t * e);
+static void inc_btn_event(lv_event_t *e);
+static void dec_btn_event(lv_event_t *e);
+static void timer_btn_callback(struct _lv_timer_t *timer);
+
+void ui_air_cond_bg_init(lv_obj_t *obj)
 {
+    /* Label "ON/OFF" */
     label_switch = lv_obj_create(obj);
     obj_conf_style_t style = {
         .width = LV_SIZE_CONTENT,
@@ -52,6 +65,7 @@ void ui_air_cond_init(lv_obj_t *obj)
     lv_obj_align(temp, LV_ALIGN_TOP_MID, 0, AIR_COND_SWITCH_Y);
     lv_label_set_text(temp, "Air Conditioner");
 
+    /* Switch button */
     _img_switch = lv_img_create(obj);
     lv_obj_refr_size(obj);
     int x = lv_obj_get_width(obj);
@@ -75,9 +89,81 @@ void ui_air_cond_init(lv_obj_t *obj)
     lv_obj_set_style_transform_zoom(_img_switch, LV_IMG_ZOOM_NONE, LV_STATE_DEFAULT);
     lv_obj_add_flag(_img_switch, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(_img_switch, img_switch_click_event, LV_EVENT_CLICKED, NULL);
+
+    /* Indooor temperature label "26°C" */
+    temp = lv_obj_create(obj);
+    style.pos_flag = OBJ_POS_FLAG_ALIGN_OFFSET;
+    style.align = LV_ALIGN_CENTER;
+    style.x_offset = 0;
+    style.y_offset = -AIR_COND_TEMP_Y_OFFSET;
+    obj_conf_style(temp, &style);
+    lv_obj_set_flex_flow(temp, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(temp, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_style_pad_row(temp, AIR_COND_TEMP_PAD, 0);
+    lv_obj_clear_flag(temp, LV_OBJ_FLAG_SCROLLABLE);
+
+    _label_indoor_temp = lv_label_create(temp);
+    lv_obj_set_style_text_font(_label_indoor_temp, AIR_COND_TEMP_FONT_L, 0);
+    lv_label_set_text_fmt(_label_indoor_temp, "%-d", _indoor_temperature);
+    lv_obj_center(_label_indoor_temp);
+    lv_obj_set_style_text_color(_label_indoor_temp, AIR_COND_COLOR_L_2, APP_STATE_ON);
+    lv_obj_set_style_text_color(_label_indoor_temp, AIR_COND_COLOR_D_2, APP_STATE_OFF);
+
+    lv_obj_t *label = lv_label_create(temp);
+    lv_obj_set_style_text_font(label, AIR_COND_SWITCH_FONT_S, 0);
+    lv_label_set_text(label, "Indoor Temperature");
+
+    _label_indoor_symb = lv_label_create(obj);
+    lv_obj_set_style_text_font(_label_indoor_symb, AIR_COND_TEMP_SYMB_L, 0);
+    lv_label_set_text(_label_indoor_symb, "°C");
+    lv_obj_refr_size(_label_indoor_symb);
+    int x_offset = lv_obj_get_width(_label_indoor_symb);
+    lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
+    lv_obj_set_style_text_color(_label_indoor_symb, AIR_COND_COLOR_L_2, APP_STATE_ON);
+    lv_obj_set_style_text_color(_label_indoor_symb, AIR_COND_COLOR_D_2, APP_STATE_OFF);
+
+    /* Temperature increase/decrease button */
+    _btn_inc = lv_btn_create(obj);
+    lv_obj_set_size(_btn_inc, AIR_COND_TEMP_BTN_W, AIR_COND_TEMP_BTN_H);
+    lv_obj_align(_btn_inc, LV_ALIGN_BOTTOM_RIGHT, -AIR_COND_TEMP_BTN_OFFSET, -AIR_COND_TEMP_BTN_OFFSET);
+    lv_obj_set_style_radius(_btn_inc, AIR_COND_TEMP_BTN_RADIUS, 0);
+    lv_obj_set_style_pad_all(_btn_inc, 0, 0);
+    lv_obj_set_style_border_width(_btn_inc, 2, 0);
+    lv_obj_set_style_border_color(_btn_inc, lv_color_white(), 0);
+    lv_obj_set_style_bg_color(_btn_inc, AIR_COND_TEMP_BTN_COLOR, 0);
+    // lv_obj_add_event_cb(_btn_inc, inc_btn_event, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(_btn_inc, inc_btn_event, LV_EVENT_PRESSED, NULL);
+    lv_obj_add_event_cb(_btn_inc, inc_btn_event, LV_EVENT_RELEASED, NULL);
+    _label_inc = lv_label_create(_btn_inc);
+    lv_obj_set_style_text_font(_label_inc, AIR_COND_TEMP_FONT_S, 0);
+    lv_label_set_text(_label_inc, "+");
+    lv_obj_center(_label_inc);
+    lv_obj_set_style_text_color(_label_inc, AIR_COND_COLOR_L_2, APP_STATE_ON);
+    lv_obj_set_style_text_color(_label_inc, AIR_COND_COLOR_D_2, APP_STATE_OFF);
+
+    _btn_dec = lv_btn_create(obj);
+    lv_obj_set_size(_btn_dec, AIR_COND_TEMP_BTN_W, AIR_COND_TEMP_BTN_H);
+    lv_obj_align(_btn_dec, LV_ALIGN_BOTTOM_LEFT, AIR_COND_TEMP_BTN_OFFSET, -AIR_COND_TEMP_BTN_OFFSET);
+    lv_obj_set_style_radius(_btn_dec, AIR_COND_TEMP_BTN_RADIUS, 0);
+    lv_obj_set_style_pad_all(_btn_dec, 0, 0);
+    lv_obj_set_style_border_width(_btn_dec, 2, 0);
+    lv_obj_set_style_border_color(_btn_dec, lv_color_white(), 0);
+    lv_obj_set_style_bg_color(_btn_dec, AIR_COND_TEMP_BTN_COLOR, 0);
+    lv_obj_add_event_cb(_btn_dec, dec_btn_event, LV_EVENT_PRESSED, NULL);
+    lv_obj_add_event_cb(_btn_dec, dec_btn_event, LV_EVENT_RELEASED, NULL);
+    _label_dec = lv_label_create(_btn_dec);
+    lv_obj_set_style_text_font(_label_dec, AIR_COND_TEMP_FONT_S, 0);
+    lv_label_set_text(_label_dec, "-");
+    lv_obj_center(_label_dec);
+    lv_obj_set_style_text_color(_label_dec, AIR_COND_COLOR_L_2, APP_STATE_ON);
+    lv_obj_set_style_text_color(_label_dec, AIR_COND_COLOR_D_2, APP_STATE_OFF);
+    _timer_btn = lv_timer_create(timer_btn_callback, AIR_COND_TEMP_BTN_PERIOD, NULL);
+    lv_timer_pause(_timer_btn);
+
+    /* Target temperature label "23°C"   */
 }
 
-void ui_air_cond_change_state(lv_state_t state)
+void ui_air_cond_bg_change_state(lv_state_t state)
 {
     if (state == _state)
         return;
@@ -98,16 +184,118 @@ void ui_air_cond_change_state(lv_state_t state)
     lv_obj_add_state(_label_off, state);
     lv_obj_clear_state(_label_off, _state);
     lv_obj_refresh_style(label_switch, LV_PART_ANY, LV_STYLE_PROP_ANY);
+    // temperature label
+    lv_obj_clear_state(_label_indoor_temp, _state);
+    lv_obj_add_state(_label_indoor_temp, state);
+    lv_obj_clear_state(_label_indoor_symb, _state);
+    lv_obj_add_state(_label_indoor_symb, state);
+    // Increase/decrease button
+    lv_obj_clear_state(_label_inc, _state);
+    lv_obj_add_state(_label_inc, state);
+    lv_obj_clear_state(_label_dec, _state);
+    lv_obj_add_state(_label_dec, state);
+    if (state == APP_STATE_ON) {
+        lv_obj_add_flag(_btn_inc, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_flag(_btn_dec, LV_OBJ_FLAG_CLICKABLE);
+    }
+    else {
+        lv_obj_clear_flag(_btn_inc, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_clear_flag(_btn_dec, LV_OBJ_FLAG_CLICKABLE);
+    }
 
     _state = state;
+}
+
+void ui_air_cond_bg_indoor_temp_inc(void)
+{
+    if (_indoor_temperature >= AIR_COND_TEMP_MAX)
+        return;
+
+    lv_label_set_text_fmt(_label_indoor_temp, "%-d", ++_indoor_temperature);
+    int x_offset = lv_obj_get_width(_label_indoor_symb);
+    lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
+}
+
+void ui_air_cond_bg_indoor_temp_dec(void)
+{
+    if (_indoor_temperature <= AIR_COND_TEMP_MIN)
+        return;
+
+    lv_label_set_text_fmt(_label_indoor_temp, "%-d", --_indoor_temperature);
+    int x_offset = lv_obj_get_width(_label_indoor_symb);
+    lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
+}
+
+void ui_air_cond_bg_target_temp_inc(void)
+{
+    if (_target_temperature >= AIR_COND_TEMP_MAX)
+        return;
+
+    lv_label_set_text_fmt(_label_target_temp, "%-d", ++_target_temperature);
+    int x_offset = lv_obj_get_width(_label_indoor_symb);
+    lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
+}
+
+void ui_air_cond_bg_target_temp_dec(void)
+{
+    if (_target_temperature <= AIR_COND_TEMP_MIN)
+        return;
+
+    lv_label_set_text_fmt(_label_target_temp, "%-d", --_target_temperature);
+    int x_offset = lv_obj_get_width(_label_indoor_symb);
+    lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
 static void img_switch_click_event(lv_event_t * e)
 {
     if (_state == APP_STATE_ON) {
-        ui_air_cond_change_state(APP_STATE_OFF);
+        ui_air_cond_bg_change_state(APP_STATE_OFF);
     }
     else {
-        ui_air_cond_change_state(APP_STATE_ON);
+        ui_air_cond_bg_change_state(APP_STATE_ON);
+    }
+}
+
+static void inc_btn_event(lv_event_t *e)
+{
+    switch (lv_event_get_code(e)) {
+        case LV_EVENT_PRESSED:
+            _inc_flag = true;
+            ui_air_cond_bg_indoor_temp_inc();
+            lv_timer_reset(_timer_btn);
+            lv_timer_resume(_timer_btn);
+            break;
+        case LV_EVENT_RELEASED:
+            lv_timer_pause(_timer_btn);
+            break;
+        default:
+            break;
+    }
+}
+
+static void dec_btn_event(lv_event_t *e)
+{
+    switch (lv_event_get_code(e)) {
+        case LV_EVENT_PRESSED:
+            _inc_flag = false;
+            ui_air_cond_bg_indoor_temp_dec();
+            lv_timer_reset(_timer_btn);
+            lv_timer_resume(_timer_btn);
+            break;
+        case LV_EVENT_RELEASED:
+            lv_timer_pause(_timer_btn);
+            break;
+        default:
+            break;
+    }
+}
+
+static void timer_btn_callback(struct _lv_timer_t *timer)
+{
+    if (_inc_flag) {
+        ui_air_cond_bg_indoor_temp_inc();
+    }
+    else {
+        ui_air_cond_bg_indoor_temp_dec();
     }
 }

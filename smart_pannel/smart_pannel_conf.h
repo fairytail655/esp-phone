@@ -7,15 +7,15 @@ extern "C" {
 
 /* Interface */
 // Status bar
-#define STATUS_BAR_EN                        1
-#define STATUS_BAR_AREA_LEFT_EN              1
-#define STATUS_BAR_AREA_MID_EN               1
-#define STATUS_BAR_AREA_RIGHT_EN             1
+#define STATUS_BAR_EN                       1
+#define STATUS_BAR_AREA_LEFT_EN             1
+#define STATUS_BAR_AREA_MID_EN              1
+#define STATUS_BAR_AREA_RIGHT_EN            1
 #if STATUS_BAR_AREA_MID_EN
-#define STATUS_BAR_CLOCK_EN                  1
-#define STATUS_BAR_CLOCK_DATE_EN             1
-#define STATUS_BAR_CLOCK_SECOND_EN           0
-#define STATUS_BAR_CLOCK_FORMAT_24           1
+#define STATUS_BAR_CLOCK_EN                 1
+#define STATUS_BAR_CLOCK_DATE_EN            1
+#define STATUS_BAR_CLOCK_SECOND_EN          0
+#define STATUS_BAR_CLOCK_FORMAT_24          1
 #endif
 
 /* Utils */

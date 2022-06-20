@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     smart_pannel_init();
 
     app_t app_air_cond = {
-        .bg_screen_init = ui_air_cond_init,
+        .bg_screen_init = ui_air_cond_bg_init,
     };
 
     manager_install_app(&app_air_cond);
@@ -90,13 +90,13 @@ static void hal_init(void)
     indev_drv_1.read_cb = mouse_read;
     lv_indev_t *mouse_indev = lv_indev_drv_register(&indev_drv_1);
 
-    keyboard_init();
-    static lv_indev_drv_t indev_drv_2;
-    lv_indev_drv_init(&indev_drv_2); /*Basic initialization*/
-    indev_drv_2.type = LV_INDEV_TYPE_KEYPAD;
-    indev_drv_2.read_cb = keyboard_read;
-    lv_indev_t *kb_indev = lv_indev_drv_register(&indev_drv_2);
-    lv_indev_set_group(kb_indev, g);
+    // keyboard_init();
+    // static lv_indev_drv_t indev_drv_2;
+    // lv_indev_drv_init(&indev_drv_2); /*Basic initialization*/
+    // indev_drv_2.type = LV_INDEV_TYPE_KEYPAD;
+    // indev_drv_2.read_cb = keyboard_read;
+    // lv_indev_t *kb_indev = lv_indev_drv_register(&indev_drv_2);
+    // lv_indev_set_group(kb_indev, g);
 
     // mousewheel_init();
     // static lv_indev_drv_t indev_drv_3;
