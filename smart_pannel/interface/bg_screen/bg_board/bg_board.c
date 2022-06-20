@@ -65,7 +65,7 @@ lv_obj_t *bg_board_regiser_obj(void)
     lv_obj_set_style_bg_color(obj, BG_BOARD_OBJ_COLOR_OFF, LV_STATE_USER_1);
     lv_obj_set_style_bg_opa(obj, BG_BOARD_OBJ_OPA_OFF, LV_STATE_USER_1);
     lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-    lv_obj_clear_flag(_obj, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
     lv_obj_t *spot = lv_img_create(_spot_obj);
 	LV_IMG_DECLARE(img_spot);

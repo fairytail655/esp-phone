@@ -7,6 +7,8 @@ static lv_obj_t *_navigate_bar;
 static lv_obj_t *_label_left, *_label_mid, *_label_right;
 static lv_obj_t *_switch;
 static lv_obj_t *_app_area;
+static uint8_t _app_index = 0;
+static lv_ll_t _app_ll;
 
 void fg_screen_init(void)
 {
@@ -61,9 +63,73 @@ void fg_screen_init(void)
     lv_obj_set_style_img_recolor_opa(_app_area, BG_BOARD_OBJ_OPA_ON, INTERFACE_STATE_ON);
     lv_obj_set_style_img_recolor(_app_area, BG_BOARD_OBJ_COLOR_OFF, INTERFACE_STATE_OFF);
     lv_obj_set_style_img_recolor_opa(_app_area, BG_BOARD_OBJ_OPA_OFF, INTERFACE_STATE_OFF);
+    _lv_ll_init(&_app_ll, sizeof(lv_obj_t *));
 }
 
-void fg_screen_show(bool flag)
+lv_obj_t *fg_screen_regiser_obj(void)
+{
+    lv_obj_t **app = (lv_obj_t **)_lv_ll_ins_tail(&_app_ll);
+
+    lv_obj_t *obj = lv_obj_create(_app_area);
+    obj_conf_style_t style = {
+        .width = BG_BOARD_WIDTH,
+        .height = BG_BOARD_HEIGHT,
+        .pos_flag = OBJ_POS_FLAG_ALIGN,
+        .align = LV_ALIGN_CENTER,
+        .border_width = 0,
+        .pad_all = 0,
+        .radius = BG_BOARD_RADIUS,
+    };
+    obj_conf_style(obj, &style);
+    lv_obj_set_style_bg_color(obj, BG_BOARD_OBJ_COLOR_ON, 0);
+    lv_obj_set_style_bg_opa(obj, BG_BOARD_OBJ_OPA_ON, 0);
+    lv_obj_set_style_bg_color(obj, BG_BOARD_OBJ_COLOR_OFF, LV_STATE_USER_1);
+    lv_obj_set_style_bg_opa(obj, BG_BOARD_OBJ_OPA_OFF, LV_STATE_USER_1);
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+
+    *app = obj;
+
+    return obj;
+}
+
+void fg_screen_switch_obj(uint8_t index)
+{
+    int app_count = _lv_ll_get_len(&_app_ll);
+    if (index > app_count) {
+        INTERFACE_TRACE("bg_board switch obj out of index");
+        return;
+    }
+
+    lv_obj_t **app = NULL;
+    lv_obj_t **app_target = NULL;
+    lv_obj_t **app_last = NULL;
+    for (int i = 0; i < app_count; i++) {
+        if (i == 0) {
+            app = (lv_obj_t **)_lv_ll_get_head(&_app_ll);
+        }
+        else {
+            app = (lv_obj_t **)_lv_ll_get_next(&_app_ll, app);
+        }
+        if (i == (_app_index - 1)) {
+            app_last = app;
+        }
+        else if (i == (index - 1)) {
+            app_target = app;
+        }
+    }
+
+    if (app_last) {
+        lv_obj_add_flag(*app_last, LV_OBJ_FLAG_HIDDEN);
+    }
+    if (app_target) {
+        lv_obj_clear_flag(*app_target, LV_OBJ_FLAG_HIDDEN);
+    }
+
+    _app_index = index;
+}
+
+void fg_screen_show(void)
 {
     lv_scr_load(_scr);
 }
