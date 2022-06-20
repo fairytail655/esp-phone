@@ -13,7 +13,6 @@ extern "C" {
 void bg_screen_init(void);
 lv_obj_t *bg_screen_get_scr(void);
 void bg_screen_show(void);
-void bg_screen_hide(void);
 
 #ifdef __cplusplus
 }

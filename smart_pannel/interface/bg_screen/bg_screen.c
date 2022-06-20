@@ -17,10 +17,5 @@ lv_obj_t *bg_screen_get_scr(void)
 
 void bg_screen_show(void)
 {
-    lv_obj_clear_flag(_scr, LV_OBJ_FLAG_HIDDEN);
-}
-
-void bg_screen_hide(void)
-{
-    lv_obj_add_flag(_scr, LV_OBJ_FLAG_HIDDEN);
+    lv_scr_load(_scr);
 }

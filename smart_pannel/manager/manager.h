@@ -9,6 +9,7 @@ extern "C" {
 
 typedef struct {
     void (*bg_screen_init)(lv_obj_t *obj);
+    void (*fg_screen_init)(lv_obj_t *obj);
 } app_t;
 
 void manager_install_app(app_t *app);
