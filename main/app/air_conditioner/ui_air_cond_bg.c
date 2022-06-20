@@ -1,6 +1,6 @@
 #include "smart_pannel.h"
 #include "../app_conf.h"
-#include "ui_air_conditioner.h"
+#include "ui_air_cond_bg.h"
 
 static lv_obj_t *label_switch;
 static lv_obj_t *_label_on, *_label_off;
@@ -161,6 +161,21 @@ void ui_air_cond_bg_init(lv_obj_t *obj)
     lv_timer_pause(_timer_btn);
 
     /* Target temperature label "23°C"   */
+    _label_target_temp = lv_label_create(obj);
+    lv_obj_set_style_text_font(_label_target_temp, AIR_COND_TEMP_FONT_S, 0);
+    lv_label_set_text_fmt(_label_target_temp, "%-d", _target_temperature);
+    lv_obj_align(_label_target_temp, LV_ALIGN_BOTTOM_MID, 0, -AIR_COND_TEMP_BTN_OFFSET);
+    lv_obj_set_style_text_color(_label_target_temp, AIR_COND_COLOR_L_2, APP_STATE_ON);
+    lv_obj_set_style_text_color(_label_target_temp, AIR_COND_COLOR_D_2, APP_STATE_OFF);
+
+    _label_target_symb = lv_label_create(obj);
+    lv_obj_set_style_text_font(_label_target_symb, AIR_COND_TEMP_SYMB_S, 0);
+    lv_label_set_text(_label_target_symb, "°C");
+    lv_obj_refr_size(_label_target_symb);
+    x_offset = lv_obj_get_width(_label_target_symb);
+    lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
+    lv_obj_set_style_text_color(_label_target_symb, AIR_COND_COLOR_L_2, APP_STATE_ON);
+    lv_obj_set_style_text_color(_label_target_symb, AIR_COND_COLOR_D_2, APP_STATE_OFF);
 }
 
 void ui_air_cond_bg_change_state(lv_state_t state)
@@ -169,22 +184,22 @@ void ui_air_cond_bg_change_state(lv_state_t state)
         return;
 
     if (state == APP_STATE_ON) {
-        // switch button
+        // Switch button
         LV_IMG_DECLARE(img_switch_on);
         lv_img_set_src(_img_switch, &img_switch_on);
     }
     else if (state == APP_STATE_OFF) {
-        // switch button
+        // Switch button
         LV_IMG_DECLARE(img_switch_off);
         lv_img_set_src(_img_switch, &img_switch_off);
     }
-    // on/off label
+    // ON/OFF label
     lv_obj_add_state(_label_on, state);
     lv_obj_clear_state(_label_on, _state);
     lv_obj_add_state(_label_off, state);
     lv_obj_clear_state(_label_off, _state);
     lv_obj_refresh_style(label_switch, LV_PART_ANY, LV_STYLE_PROP_ANY);
-    // temperature label
+    // Indoor temperature label
     lv_obj_clear_state(_label_indoor_temp, _state);
     lv_obj_add_state(_label_indoor_temp, state);
     lv_obj_clear_state(_label_indoor_symb, _state);
@@ -202,8 +217,23 @@ void ui_air_cond_bg_change_state(lv_state_t state)
         lv_obj_clear_flag(_btn_inc, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_clear_flag(_btn_dec, LV_OBJ_FLAG_CLICKABLE);
     }
+    // Target temperature label
+    lv_obj_clear_state(_label_target_temp, _state);
+    lv_obj_add_state(_label_target_temp, state);
+    lv_obj_clear_state(_label_target_symb, _state);
+    lv_obj_add_state(_label_target_symb, state);
 
     _state = state;
+}
+
+void ui_air_cond_bg_indoor_temp_set(int temp)
+{
+    if ((temp >= AIR_COND_TEMP_MAX) || (temp <= AIR_COND_TEMP_MIN))
+        return;
+
+    lv_label_set_text_fmt(_label_indoor_temp, "%-d", temp);
+    int x_offset = lv_obj_get_width(_label_indoor_symb);
+    lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
 void ui_air_cond_bg_indoor_temp_inc(void)
@@ -226,14 +256,24 @@ void ui_air_cond_bg_indoor_temp_dec(void)
     lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
+void ui_air_cond_bg_target_temp_set(int temp)
+{
+    if ((temp >= AIR_COND_TEMP_MAX) || (temp <= AIR_COND_TEMP_MIN))
+        return;
+
+    lv_label_set_text_fmt(_label_target_temp, "%-d", temp);
+    int x_offset = lv_obj_get_width(_label_target_symb);
+    lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
+}
+
 void ui_air_cond_bg_target_temp_inc(void)
 {
     if (_target_temperature >= AIR_COND_TEMP_MAX)
         return;
 
     lv_label_set_text_fmt(_label_target_temp, "%-d", ++_target_temperature);
-    int x_offset = lv_obj_get_width(_label_indoor_symb);
-    lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
+    int x_offset = lv_obj_get_width(_label_target_symb);
+    lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
 void ui_air_cond_bg_target_temp_dec(void)
@@ -242,8 +282,8 @@ void ui_air_cond_bg_target_temp_dec(void)
         return;
 
     lv_label_set_text_fmt(_label_target_temp, "%-d", --_target_temperature);
-    int x_offset = lv_obj_get_width(_label_indoor_symb);
-    lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
+    int x_offset = lv_obj_get_width(_label_target_symb);
+    lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
 static void img_switch_click_event(lv_event_t * e)

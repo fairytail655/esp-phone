@@ -34,7 +34,7 @@ LV_FONT_DECLARE(my_font_bold_60);
 #define AIR_COND_TEMP_BTN_OFFSET        20
 #define AIR_COND_TEMP_BTN_RADIUS        10
 #define AIR_COND_TEMP_BTN_COLOR         lv_color_hex(0xecf4fc)
-#define AIR_COND_TEMP_BTN_PERIOD        2000
+#define AIR_COND_TEMP_BTN_PERIOD        1500
 #define AIR_COND_TEMP_MAX               100
 #define AIR_COND_TEMP_MIN               -100
 
