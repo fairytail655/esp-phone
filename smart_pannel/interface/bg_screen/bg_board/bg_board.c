@@ -21,6 +21,10 @@ lv_obj_t *bg_board_init(lv_obj_t *scr)
     lv_obj_set_align(_obj, LV_ALIGN_CENTER);
     LV_IMG_DECLARE(img_bg_board);
     lv_obj_set_style_bg_img_src(_obj, &img_bg_board, 0);
+    lv_obj_set_style_bg_img_recolor(_obj, BG_BOARD_OBJ_COLOR_ON, INTERFACE_STATE_ON);
+    lv_obj_set_style_bg_img_recolor_opa(_obj, BG_BOARD_OBJ_OPA_ON, INTERFACE_STATE_ON);
+    lv_obj_set_style_bg_img_recolor(_obj, BG_BOARD_OBJ_COLOR_OFF, INTERFACE_STATE_OFF);
+    lv_obj_set_style_bg_img_recolor_opa(_obj, BG_BOARD_OBJ_OPA_OFF, INTERFACE_STATE_OFF);
     lv_obj_clear_flag(_obj, LV_OBJ_FLAG_SCROLLABLE);
 
 	_spot_obj = lv_obj_create(scr);
@@ -31,8 +35,6 @@ lv_obj_t *bg_board_init(lv_obj_t *scr)
     lv_obj_set_align(_spot_obj, LV_ALIGN_BOTTOM_MID);
 	lv_obj_set_style_border_width(_spot_obj, 0, 0);
 	lv_obj_set_style_pad_all(_spot_obj, 0, 0);
-	// lv_obj_set_style_border_width(_spot_obj, 1, 0);
-	// lv_obj_set_style_border_color(_spot_obj, lv_color_make(255, 0, 0), 0);
 	// Background
 	lv_obj_set_style_bg_opa(_spot_obj, LV_OPA_TRANSP, 0);
 	// layout
@@ -60,12 +62,9 @@ lv_obj_t *bg_board_regiser_obj(void)
         .border_width = 0,
         .pad_all = 0,
         .radius = BG_BOARD_RADIUS,
+        .bg_opa = LV_OPA_TRANSP,
     };
     obj_conf_style(obj, &style);
-    lv_obj_set_style_bg_color(obj, BG_BOARD_OBJ_COLOR_ON, 0);
-    lv_obj_set_style_bg_opa(obj, BG_BOARD_OBJ_OPA_ON, 0);
-    lv_obj_set_style_bg_color(obj, BG_BOARD_OBJ_COLOR_OFF, LV_STATE_USER_1);
-    lv_obj_set_style_bg_opa(obj, BG_BOARD_OBJ_OPA_OFF, LV_STATE_USER_1);
     lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
 
@@ -123,12 +122,14 @@ void bg_board_switch_obj(uint8_t index)
     _app_index = index;
 }
 
-void bg_board_obj_change_state(lv_obj_t *obj, bg_board_state_t state)
+void bg_board_change_state(bg_board_state_t state)
 {
-    if (state == BG_BOARD_STATE_ON) {
-        lv_obj_add_state(obj, 0);
+    if (state == BG_BOARD_STATE_OFF) {
+        lv_obj_clear_state(_obj, INTERFACE_STATE_ON);
+        lv_obj_add_state(_obj, INTERFACE_STATE_OFF);
     }
     else {
-        lv_obj_add_state(obj, LV_STATE_USER_1);
+        lv_obj_clear_state(_obj, INTERFACE_STATE_OFF);
+        lv_obj_add_state(_obj, INTERFACE_STATE_ON);
     }
 }

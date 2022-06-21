@@ -11,8 +11,9 @@ extern "C" {
 #endif
 
 void bg_screen_init(void);
-lv_obj_t *bg_screen_get_scr(void);
 void bg_screen_show(void);
+void bg_screen_change_state(bg_board_state_t state);
+void bg_screen_register_callback_more(lv_event_cb_t callback);
 
 #ifdef __cplusplus
 }

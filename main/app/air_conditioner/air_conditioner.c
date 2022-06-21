@@ -13,8 +13,6 @@ void air_conditioner_init(void)
         .fg_screen_back_callback = fg_back_click_event,
     };
     smart_pannel_install_app(&app_air_cond);
-
-    ui_air_bg_register_callback_more_click(bg_more_click_event);
 }
 
 static void bg_more_click_event(lv_event_t *e)

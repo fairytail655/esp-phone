@@ -6,8 +6,13 @@ static lv_obj_t *_scr = NULL;
 
 static lv_obj_t *_label_switch;
 static lv_obj_t *_label_on, *_label_off;
-static lv_obj_t *_img_switch;
+static lv_obj_t *_img_switch, *_img_more;
 static bg_board_state_t _state = BG_BOARD_STATE_OFF;
+
+static lv_event_cb_t _more_click_event = NULL;
+
+static void img_switch_click_event(lv_event_t * e);
+static void img_more_click_event(lv_event_t * e);
 
 void bg_screen_init(void)
 {
@@ -36,81 +41,124 @@ void bg_screen_init(void)
     lv_obj_set_flex_align(_label_switch, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(_label_switch, LABEL_SWITCH_PAD, 0);
     lv_obj_clear_flag(_label_switch, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_add_flag(_label_switch, LV_OBJ_FLAG_FLOATING);
 
     _label_on = lv_label_create(_label_switch);
-    lv_obj_set_style_text_font(_label_on, LABEL_SWITCH_FONT_L, 0);
-    lv_obj_set_style_text_color(_label_on, LABEL_COLOR_L_1, LV_STATE_USER_1);
-    lv_obj_set_style_text_font(_label_on, LABEL_SWITCH_FONT_S, 0);
-    lv_obj_set_style_text_color(_label_on, LABEL_COLOR_D_1, 0);
+    lv_obj_set_style_text_font(_label_on, LABEL_SWITCH_FONT_L, BG_BOARD_STATE_ON);
+    lv_obj_set_style_text_color(_label_on, LABEL_COLOR_L_1, BG_BOARD_STATE_ON);
+    lv_obj_set_style_text_font(_label_on, LABEL_SWITCH_FONT_S, BG_BOARD_STATE_OFF);
+    lv_obj_set_style_text_color(_label_on, LABEL_COLOR_D_1, BG_BOARD_STATE_OFF);
     lv_label_set_text(_label_on, "ON");
+    lv_obj_add_state(_label_on, _state);
 
     lv_obj_t *temp = lv_label_create(_label_switch);
     lv_obj_set_style_text_font(temp, LABEL_SWITCH_FONT_L, 0);
     lv_label_set_text(temp, "/");
 
     _label_off = lv_label_create(_label_switch);
-    lv_obj_set_style_text_font(_label_off, LABEL_SWITCH_FONT_S, LV_STATE_USER_1);
-    lv_obj_set_style_text_color(_label_off, LABEL_COLOR_D_1, LV_STATE_USER_1);
-    lv_obj_set_style_text_font(_label_off, LABEL_SWITCH_FONT_L, 0);
-    lv_obj_set_style_text_color(_label_off, LABEL_COLOR_L_1, 0);
+    lv_obj_set_style_text_font(_label_off, LABEL_SWITCH_FONT_S, BG_BOARD_STATE_ON);
+    lv_obj_set_style_text_color(_label_off, LABEL_COLOR_D_1, BG_BOARD_STATE_ON);
+    lv_obj_set_style_text_font(_label_off, LABEL_SWITCH_FONT_L, BG_BOARD_STATE_OFF);
+    lv_obj_set_style_text_color(_label_off, LABEL_COLOR_L_1, BG_BOARD_STATE_OFF);
     lv_label_set_text(_label_off, "OFF");
+    lv_obj_add_state(_label_off, _state);
 
-    // /* Switch button */
-    // _img_switch = lv_img_create(obj);
-    // lv_obj_refr_size(obj);
-    // int x = lv_obj_get_width(obj);
-    // x = x - LABEL_SWITCH_X - LABEL_SWITCH_ICON_SIZE;
-    // lv_obj_set_pos(_img_switch, x, LABEL_SWITCH_Y);
-    // LV_IMG_DECLARE(img_switch_on);
-    // lv_img_set_src(_img_switch, &img_switch_on);
-    // // Calculate the multiple of the size between the target and the image.
-    // float h_factor, w_factor;
-    // h_factor = (float)LABEL_SWITCH_ICON_SIZE / img_switch_on.header.h;
-    // w_factor = (float)LABEL_SWITCH_ICON_SIZE / img_switch_on.header.w;
-    // // Scale the image to a suitable size.
-    // // So you don’t have to consider the size of the source image.
-    // if (h_factor < w_factor) {
-    //     lv_img_set_zoom(_img_switch, (int)(h_factor * LV_IMG_ZOOM_NONE));
-    // }
-    // else {
-    //     lv_img_set_zoom(_img_switch, (int)(w_factor * LV_IMG_ZOOM_NONE));
-    // }
-    // lv_obj_set_style_transform_zoom(_img_switch, (int)(LV_IMG_ZOOM_NONE * LABEL_SWITCH_ZOOM_PERCENT / 100.0), LV_STATE_PRESSED);
-    // lv_obj_set_style_transform_zoom(_img_switch, LV_IMG_ZOOM_NONE, LV_STATE_DEFAULT);
-    // lv_obj_add_flag(_img_switch, LV_OBJ_FLAG_CLICKABLE);
-    // lv_obj_add_event_cb(_img_switch, img_switch_click_event, LV_EVENT_CLICKED, NULL);
+    /* Switch button */
+    _img_switch = lv_img_create(_scr);
+    LV_IMG_DECLARE(img_switch_off);
+    LV_IMG_DECLARE(img_switch_on);
+    lv_img_dsc_t *img_src = (_state == BG_BOARD_STATE_OFF) ? &img_switch_off: &img_switch_on;
+    lv_img_set_src(_img_switch, img_src);
+    lv_obj_align_to(
+        _img_switch, obj_bg_board, LV_ALIGN_TOP_RIGHT, -BTN_SWITCH_ICON_X_OFFSET, BTN_SWITCH_ICON_Y_OFFSET
+    );
+    // Calculate the multiple of the size between the target and the image.
+    float h_factor, w_factor;
+    h_factor = (float)BTN_SWITCH_ICON_SIZE / img_src->header.h;
+    w_factor = (float)BTN_SWITCH_ICON_SIZE / img_src->header.w;
+    // Scale the image to a suitable size.
+    // So you don’t have to consider the size of the source image.
+    if (h_factor < w_factor) {
+        lv_img_set_zoom(_img_switch, (int)(h_factor * LV_IMG_ZOOM_NONE));
+    }
+    else {
+        lv_img_set_zoom(_img_switch, (int)(w_factor * LV_IMG_ZOOM_NONE));
+    }
+    lv_obj_set_style_transform_zoom(_img_switch, (int)(LV_IMG_ZOOM_NONE * BTN_SWITCH_ZOOM_PERCENT / 100.0), LV_STATE_PRESSED);
+    lv_obj_set_style_transform_zoom(_img_switch, LV_IMG_ZOOM_NONE, LV_STATE_DEFAULT);
+    lv_obj_add_flag(_img_switch, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(_img_switch, img_switch_click_event, LV_EVENT_CLICKED, NULL);
 
-    // /* More button */
-    // temp = lv_img_create(obj);
-    // lv_obj_refr_pos(_img_switch);
-    // int y = lv_obj_get_y(_img_switch);
-    // y += LABEL_SWITCH_ICON_SIZE + LABEL_SWITCH_OFFSET;
-    // lv_obj_set_pos(temp, lv_obj_get_x(_img_switch), y);
-    // LV_IMG_DECLARE(img_more);
-    // lv_img_set_src(temp, &img_more);
-    // // Calculate the multiple of the size between the target and the image.
-    // h_factor = (float)LABEL_SWITCH_ICON_SIZE / img_switch_on.header.h;
-    // w_factor = (float)LABEL_SWITCH_ICON_SIZE / img_switch_on.header.w;
-    // // Scale the image to a suitable size.
-    // // So you don’t have to consider the size of the source image.
-    // if (h_factor < w_factor) {
-    //     lv_img_set_zoom(temp, (int)(h_factor * LV_IMG_ZOOM_NONE));
-    // }
-    // else {
-    //     lv_img_set_zoom(temp, (int)(w_factor * LV_IMG_ZOOM_NONE));
-    // }
-    // lv_obj_set_style_transform_zoom(temp, (int)(LV_IMG_ZOOM_NONE * LABEL_SWITCH_ZOOM_PERCENT / 100.0), LV_STATE_PRESSED);
-    // lv_obj_set_style_transform_zoom(temp, LV_IMG_ZOOM_NONE, LV_STATE_DEFAULT);
-    // lv_obj_add_flag(temp, LV_OBJ_FLAG_CLICKABLE);
-    // lv_obj_add_event_cb(temp, img_more_click_event, LV_EVENT_CLICKED, NULL);
+    /* More button */
+    _img_more = lv_img_create(_scr);
+    LV_IMG_DECLARE(img_more);
+    lv_img_set_src(_img_more, &img_more);
+    lv_obj_align_to(_img_more, _img_switch, LV_ALIGN_BOTTOM_MID, 0, BTN_SWITCH_Y_OFFSET);
+    // Calculate the multiple of the size between the target and the image.
+    h_factor = (float)BTN_SWITCH_ICON_SIZE / img_switch_on.header.h;
+    w_factor = (float)BTN_SWITCH_ICON_SIZE / img_switch_on.header.w;
+    // Scale the image to a suitable size.
+    // So you don’t have to consider the size of the source image.
+    if (h_factor < w_factor) {
+        lv_img_set_zoom(_img_more, (int)(h_factor * LV_IMG_ZOOM_NONE));
+    }
+    else {
+        lv_img_set_zoom(_img_more, (int)(w_factor * LV_IMG_ZOOM_NONE));
+    }
+    lv_obj_set_style_transform_zoom(_img_more, (int)(LV_IMG_ZOOM_NONE * BTN_SWITCH_ZOOM_PERCENT / 100.0), LV_STATE_PRESSED);
+    lv_obj_set_style_transform_zoom(_img_more, LV_IMG_ZOOM_NONE, LV_STATE_DEFAULT);
+    lv_obj_add_flag(_img_more, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(_img_more, img_more_click_event, LV_EVENT_CLICKED, NULL);
 }
 
-lv_obj_t *bg_screen_get_scr(void)
+void bg_screen_change_state(bg_board_state_t state)
 {
-    return _scr;
+    if (state == _state)
+        return;
+
+    // Background Board
+    bg_board_change_state(state);
+    // Switch button
+    if (state == BG_BOARD_STATE_ON) {
+        LV_IMG_DECLARE(img_switch_on);
+        lv_img_set_src(_img_switch, &img_switch_on);
+    }
+    else if (state == BG_BOARD_STATE_OFF) {
+        LV_IMG_DECLARE(img_switch_off);
+        lv_img_set_src(_img_switch, &img_switch_off);
+    }
+    /* ON/OFF label */
+    lv_obj_add_state(_label_on, state);
+    lv_obj_clear_state(_label_on, _state);
+    lv_obj_add_state(_label_off, state);
+    lv_obj_clear_state(_label_off, _state);
+    lv_obj_refresh_style(_label_switch, LV_PART_ANY, LV_STYLE_PROP_ANY);
+
+    _state = state;
 }
 
 void bg_screen_show(void)
 {
     lv_scr_load(_scr);
+}
+
+void bg_screen_register_callback_more(lv_event_cb_t callback)
+{
+    _more_click_event = callback;
+}
+
+static void img_switch_click_event(lv_event_t * e)
+{
+    if (_state == BG_BOARD_STATE_ON) {
+        bg_screen_change_state(BG_BOARD_STATE_OFF);
+    }
+    else {
+        bg_screen_change_state(BG_BOARD_STATE_ON);
+    }
+}
+
+static void img_more_click_event(lv_event_t * e)
+{
+    if (_more_click_event)
+        _more_click_event(e);
 }

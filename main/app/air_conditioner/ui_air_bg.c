@@ -12,10 +12,6 @@ static lv_obj_t *_label_inc, *_label_dec;
 static lv_timer_t *_timer_btn;
 static bool _inc_flag = true;
 
-static lv_event_cb_t _more_click_event;
-
-static void img_switch_click_event(lv_event_t * e);
-static void img_more_click_event(lv_event_t * e);
 static void inc_btn_event(lv_event_t *e);
 static void dec_btn_event(lv_event_t *e);
 static void timer_btn_callback(struct _lv_timer_t *timer);
@@ -125,11 +121,6 @@ void ui_air_bg_init(lv_obj_t *obj, smart_pannel_bg_state_t state)
     _state = state;
 }
 
-void ui_air_bg_register_callback_more_click(lv_event_cb_t func)
-{
-    _more_click_event = func;
-}
-
 void ui_air_bg_change_state(lv_state_t state)
 {
     if (state == _state)
@@ -236,22 +227,6 @@ void ui_air_bg_target_temp_dec(void)
     lv_label_set_text_fmt(_label_target_temp, "%-d", --_target_temperature);
     int x_offset = lv_obj_get_width(_label_target_symb);
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
-}
-
-static void img_switch_click_event(lv_event_t * e)
-{
-    if (_state == SMART_PANNEL_BG_STATE_ON) {
-        ui_air_bg_change_state(SMART_PANNEL_BG_STATE_OFF);
-    }
-    else {
-        ui_air_bg_change_state(SMART_PANNEL_BG_STATE_ON);
-    }
-}
-
-static void img_more_click_event(lv_event_t * e)
-{
-    if (_more_click_event)
-        _more_click_event(e);
 }
 
 static void inc_btn_event(lv_event_t *e)

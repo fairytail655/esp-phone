@@ -10,8 +10,8 @@ extern "C" {
 #endif
 
 typedef enum {
-    SMART_PANNEL_BG_STATE_ON = 0,
-    SMART_PANNEL_BG_STATE_OFF = LV_STATE_USER_1,
+    SMART_PANNEL_BG_STATE_OFF = 0,
+    SMART_PANNEL_BG_STATE_ON = LV_STATE_USER_1,
 } smart_pannel_bg_state_t;
 
 typedef struct {

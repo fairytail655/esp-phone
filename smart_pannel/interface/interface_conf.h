@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-#define INTERFACE_STATE_ON                   0
-#define INTERFACE_STATE_OFF                  LV_STATE_USER_1
+#define INTERFACE_STATE_OFF                 0
+#define INTERFACE_STATE_ON                  LV_STATE_USER_1
 
 /* Background Srceen */
 // Wallpaper
@@ -23,7 +23,7 @@ extern "C" {
 #define BG_SPOT_COLOR_2			            lv_color_hex(0x1ebcfc)
 #define BG_BOARD_OBJ_OPA_ON                 20
 #define BG_BOARD_OBJ_COLOR_ON               lv_color_hex(0x04b4fc)
-#define BG_BOARD_OBJ_OPA_OFF                20
+#define BG_BOARD_OBJ_OPA_OFF                30
 #define BG_BOARD_OBJ_COLOR_OFF              lv_color_hex(0x0)
 // Status Bar
 #define STATUS_BAR_WIDTH                    LV_HOR_RES
@@ -42,11 +42,14 @@ extern "C" {
 #define LABEL_SWITCH_X_OFFSET               20
 #define LABEL_SWITCH_Y_OFFEST               20
 #define LABEL_SWITCH_PAD                    5
-#define LABEL_SWITCH_ICON_SIZE              48
-#define LABEL_SWITCH_OFFSET                 40
-#define LABEL_SWITCH_ZOOM_PERCENT           130
 #define LABEL_COLOR_L_1                     lv_color_hex(0x5cc4fc)
 #define LABEL_COLOR_D_1                     lv_color_hex(0x0)
+// Button Swtich
+#define BTN_SWITCH_ICON_X_OFFSET            10
+#define BTN_SWITCH_ICON_Y_OFFSET            10
+#define BTN_SWITCH_ICON_SIZE                48
+#define BTN_SWITCH_Y_OFFSET                 80
+#define BTN_SWITCH_ZOOM_PERCENT             130
 
 /* Foreground Screen */
 // Navigate Bar
