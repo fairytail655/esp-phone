@@ -14,7 +14,7 @@ static lv_event_cb_t _left_area_event_callback;
 
 static void left_area_event(lv_event_t *e);
 
-void fg_screen_init(void)
+void fg_init(void)
 {
     _scr = lv_obj_create(NULL);
     // lv_scr_load(_scr);
@@ -83,12 +83,12 @@ void fg_screen_init(void)
     _lv_ll_init(&_app_ll, sizeof(lv_obj_t *));
 }
 
-void fg_screen_register_callback_left_area(lv_event_cb_t func)
+void fg_register_callback_back(lv_event_cb_t callback)
 {
-    _left_area_event_callback = func;
+    _left_area_event_callback = callback;
 }
 
-lv_obj_t *fg_screen_regiser_obj(void)
+lv_obj_t *fg_regiser_obj(void)
 {
     lv_obj_t **app = (lv_obj_t **)_lv_ll_ins_tail(&_app_ll);
 
@@ -115,7 +115,7 @@ lv_obj_t *fg_screen_regiser_obj(void)
     return obj;
 }
 
-void fg_screen_switch_obj(uint8_t index)
+void fg_switch_obj(uint8_t index)
 {
     int app_count = _lv_ll_get_len(&_app_ll);
     if (index > app_count) {
@@ -151,17 +151,17 @@ void fg_screen_switch_obj(uint8_t index)
     _app_index = index;
 }
 
-void fg_screen_show(void)
+void fg_show(void)
 {
     lv_scr_load(_scr);
 }
 
-void fg_screen_set_nav_bar_color(lv_color_t color)
+void fg_set_nav_bar_color(lv_color_t color)
 {
     lv_obj_set_style_bg_color(_navigate_bar, color, 0);
 }
 
-void fg_screen_change_state(int state)
+void fg_change_state(int state)
 {
     if (state == INTERFACE_STATE_ON) {
         lv_obj_add_state(_app_area, INTERFACE_STATE_ON);
@@ -173,7 +173,7 @@ void fg_screen_change_state(int state)
     }
 }
 
-void fg_screen_set_left_text(const char *text)
+void fg_set_left_text(const char *text)
 {
     if (text == NULL) {
         lv_obj_add_flag(_label_left, LV_OBJ_FLAG_HIDDEN);
@@ -184,7 +184,7 @@ void fg_screen_set_left_text(const char *text)
     lv_obj_clear_flag(_label_left, LV_OBJ_FLAG_HIDDEN);
 }
 
-void fg_screen_set_middle_text(const char *text)
+void fg_set_middle_text(const char *text)
 {
     if (text == NULL) {
         lv_obj_add_flag(_label_mid, LV_OBJ_FLAG_HIDDEN);
@@ -195,7 +195,7 @@ void fg_screen_set_middle_text(const char *text)
     lv_obj_clear_flag(_label_left, LV_OBJ_FLAG_HIDDEN);
 }
 
-void fg_screen_set_right_text(const char *text)
+void fg_set_right_text(const char *text)
 {
     if (text == NULL) {
         lv_obj_add_flag(_label_right, LV_OBJ_FLAG_HIDDEN);
@@ -207,13 +207,13 @@ void fg_screen_set_right_text(const char *text)
     lv_obj_add_flag(_switch, LV_OBJ_FLAG_HIDDEN);
 }
 
-void fg_screen_enabel_switch(void)
+void fg_enabel_switch(void)
 {
     lv_obj_add_flag(_label_right, LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_flag(_switch, LV_OBJ_FLAG_HIDDEN);
 }
 
-void fg_screen_set_switch(bool flag)
+void fg_set_switch(bool flag)
 {
     if (flag) {
         lv_obj_add_state(_switch, LV_STATE_CHECKED);

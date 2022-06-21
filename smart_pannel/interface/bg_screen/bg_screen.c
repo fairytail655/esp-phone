@@ -2,19 +2,20 @@
 #include "utils/utils.h"
 #include "bg_screen.h"
 
+static bg_board_state_t _state;
 static lv_obj_t *_scr = NULL;
 
 static lv_obj_t *_label_switch;
 static lv_obj_t *_label_on, *_label_off;
 static lv_obj_t *_img_switch, *_img_more;
-static bg_board_state_t _state = BG_BOARD_STATE_OFF;
 
-static lv_event_cb_t _more_click_event = NULL;
+static lv_event_cb_t _switch_callback = NULL;
+static lv_event_cb_t _more_callback = NULL;
 
 static void img_switch_click_event(lv_event_t * e);
 static void img_more_click_event(lv_event_t * e);
 
-void bg_screen_init(void)
+void bg_init(void)
 {
     _scr = lv_scr_act();
     bg_wallpaper_init(_scr);
@@ -49,7 +50,6 @@ void bg_screen_init(void)
     lv_obj_set_style_text_font(_label_on, LABEL_SWITCH_FONT_S, BG_BOARD_STATE_OFF);
     lv_obj_set_style_text_color(_label_on, LABEL_COLOR_D_1, BG_BOARD_STATE_OFF);
     lv_label_set_text(_label_on, "ON");
-    lv_obj_add_state(_label_on, _state);
 
     lv_obj_t *temp = lv_label_create(_label_switch);
     lv_obj_set_style_text_font(temp, LABEL_SWITCH_FONT_L, 0);
@@ -61,21 +61,18 @@ void bg_screen_init(void)
     lv_obj_set_style_text_font(_label_off, LABEL_SWITCH_FONT_L, BG_BOARD_STATE_OFF);
     lv_obj_set_style_text_color(_label_off, LABEL_COLOR_L_1, BG_BOARD_STATE_OFF);
     lv_label_set_text(_label_off, "OFF");
-    lv_obj_add_state(_label_off, _state);
 
     /* Switch button */
     _img_switch = lv_img_create(_scr);
     LV_IMG_DECLARE(img_switch_off);
-    LV_IMG_DECLARE(img_switch_on);
-    lv_img_dsc_t *img_src = (_state == BG_BOARD_STATE_OFF) ? &img_switch_off: &img_switch_on;
-    lv_img_set_src(_img_switch, img_src);
+    lv_img_set_src(_img_switch, &img_switch_off);
     lv_obj_align_to(
         _img_switch, obj_bg_board, LV_ALIGN_TOP_RIGHT, -BTN_SWITCH_ICON_X_OFFSET, BTN_SWITCH_ICON_Y_OFFSET
     );
     // Calculate the multiple of the size between the target and the image.
     float h_factor, w_factor;
-    h_factor = (float)BTN_SWITCH_ICON_SIZE / img_src->header.h;
-    w_factor = (float)BTN_SWITCH_ICON_SIZE / img_src->header.w;
+    h_factor = (float)BTN_SWITCH_ICON_SIZE / img_switch_off.header.h;
+    w_factor = (float)BTN_SWITCH_ICON_SIZE / img_switch_off.header.w;
     // Scale the image to a suitable size.
     // So you don’t have to consider the size of the source image.
     if (h_factor < w_factor) {
@@ -95,8 +92,8 @@ void bg_screen_init(void)
     lv_img_set_src(_img_more, &img_more);
     lv_obj_align_to(_img_more, _img_switch, LV_ALIGN_BOTTOM_MID, 0, BTN_SWITCH_Y_OFFSET);
     // Calculate the multiple of the size between the target and the image.
-    h_factor = (float)BTN_SWITCH_ICON_SIZE / img_switch_on.header.h;
-    w_factor = (float)BTN_SWITCH_ICON_SIZE / img_switch_on.header.w;
+    h_factor = (float)BTN_SWITCH_ICON_SIZE / img_more.header.h;
+    w_factor = (float)BTN_SWITCH_ICON_SIZE / img_more.header.w;
     // Scale the image to a suitable size.
     // So you don’t have to consider the size of the source image.
     if (h_factor < w_factor) {
@@ -111,11 +108,8 @@ void bg_screen_init(void)
     lv_obj_add_event_cb(_img_more, img_more_click_event, LV_EVENT_CLICKED, NULL);
 }
 
-void bg_screen_change_state(bg_board_state_t state)
+void bg_change_state(bg_board_state_t state)
 {
-    if (state == _state)
-        return;
-
     // Background Board
     bg_board_change_state(state);
     // Switch button
@@ -129,25 +123,30 @@ void bg_screen_change_state(bg_board_state_t state)
     }
     /* ON/OFF label */
     lv_obj_add_state(_label_on, state);
-    lv_obj_clear_state(_label_on, _state);
+    lv_obj_clear_state(_label_on, ~state);
     lv_obj_add_state(_label_off, state);
-    lv_obj_clear_state(_label_off, _state);
+    lv_obj_clear_state(_label_off, ~state);
     lv_obj_refresh_style(_label_switch, LV_PART_ANY, LV_STYLE_PROP_ANY);
 
     _state = state;
 }
 
-void bg_screen_show(void)
+void bg_show(void)
 {
     lv_scr_load(_scr);
 }
 
-void bg_screen_register_callback_more(lv_event_cb_t callback)
+void bg_register_callback_switch(lv_event_cb_t callback)
 {
-    _more_click_event = callback;
+    _switch_callback  = callback;
 }
 
-void bg_screen_show_label(bool en)
+void bg_register_callback_more(lv_event_cb_t callback)
+{
+    _more_callback  = callback;
+}
+
+void bg_show_label(bool en)
 {
     if (en)
         lv_obj_clear_flag(_label_switch, LV_OBJ_FLAG_HIDDEN);
@@ -155,7 +154,7 @@ void bg_screen_show_label(bool en)
         lv_obj_add_flag(_label_switch, LV_OBJ_FLAG_HIDDEN);
 }
 
-void bg_screen_show_switch(bool en)
+void bg_show_switch(bool en)
 {
     if (en)
         lv_obj_clear_flag(_img_switch, LV_OBJ_FLAG_HIDDEN);
@@ -163,7 +162,7 @@ void bg_screen_show_switch(bool en)
         lv_obj_add_flag(_img_switch, LV_OBJ_FLAG_HIDDEN);
 }
 
-void bg_screen_show_more(bool en)
+void bg_show_more(bool en)
 {
     if (en)
         lv_obj_clear_flag(_img_more, LV_OBJ_FLAG_HIDDEN);
@@ -174,15 +173,17 @@ void bg_screen_show_more(bool en)
 static void img_switch_click_event(lv_event_t * e)
 {
     if (_state == BG_BOARD_STATE_ON) {
-        bg_screen_change_state(BG_BOARD_STATE_OFF);
+        bg_change_state(BG_BOARD_STATE_OFF);
     }
     else {
-        bg_screen_change_state(BG_BOARD_STATE_ON);
+        bg_change_state(BG_BOARD_STATE_ON);
     }
+    if (_switch_callback)
+        _switch_callback(e);
 }
 
 static void img_more_click_event(lv_event_t * e)
 {
-    if (_more_click_event)
-        _more_click_event(e);
+    if (_more_callback)
+        _more_callback(e);
 }

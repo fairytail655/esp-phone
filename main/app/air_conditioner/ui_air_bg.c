@@ -2,7 +2,6 @@
 #include "../app_conf.h"
 #include "ui_air_bg.h"
 
-static smart_pannel_bg_state_t _state;
 static int _indoor_temperature = 26;
 static int _target_temperature = 23;
 static lv_obj_t *_label_indoor_temp, *_label_target_temp;
@@ -16,7 +15,7 @@ static void inc_btn_event(lv_event_t *e);
 static void dec_btn_event(lv_event_t *e);
 static void timer_btn_callback(struct _lv_timer_t *timer);
 
-void ui_air_bg_init(lv_obj_t *obj, smart_pannel_bg_state_t state)
+void ui_air_bg_init(lv_obj_t *obj)
 {
     lv_obj_t *temp = lv_label_create(obj);
     lv_obj_set_style_text_font(temp, AIR_COND_TITLE_FONT, 0);
@@ -117,40 +116,19 @@ void ui_air_bg_init(lv_obj_t *obj, smart_pannel_bg_state_t state)
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
     lv_obj_set_style_text_color(_label_target_symb, AIR_COND_COLOR_L_2, SMART_PANNEL_BG_STATE_ON);
     lv_obj_set_style_text_color(_label_target_symb, AIR_COND_COLOR_D_2, SMART_PANNEL_BG_STATE_OFF);
-
-    _state = state;
 }
 
 void ui_air_bg_change_state(lv_state_t state)
 {
-    if (state == _state)
-        return;
-
-    // if (state == SMART_PANNEL_BG_STATE_ON) {
-    //     // Switch button
-    //     LV_IMG_DECLARE(img_switch_on);
-    //     lv_img_set_src(_img_switch, &img_switch_on);
-    // }
-    // else if (state == SMART_PANNEL_BG_STATE_OFF) {
-    //     // Switch button
-    //     LV_IMG_DECLARE(img_switch_off);
-    //     lv_img_set_src(_img_switch, &img_switch_off);
-    // }
-    // ON/OFF label
-    // lv_obj_add_state(_label_on, state);
-    // lv_obj_clear_state(_label_on, _state);
-    // lv_obj_add_state(_label_off, state);
-    // lv_obj_clear_state(_label_off, _state);
-    // lv_obj_refresh_style(label_switch, LV_PART_ANY, LV_STYLE_PROP_ANY);
     // Indoor temperature label
-    lv_obj_clear_state(_label_indoor_temp, _state);
+    lv_obj_clear_state(_label_indoor_temp, ~state);
     lv_obj_add_state(_label_indoor_temp, state);
-    lv_obj_clear_state(_label_indoor_symb, _state);
+    lv_obj_clear_state(_label_indoor_symb, ~state);
     lv_obj_add_state(_label_indoor_symb, state);
     // Increase/decrease button
-    lv_obj_clear_state(_label_inc, _state);
+    lv_obj_clear_state(_label_inc, ~state);
     lv_obj_add_state(_label_inc, state);
-    lv_obj_clear_state(_label_dec, _state);
+    lv_obj_clear_state(_label_dec, ~state);
     lv_obj_add_state(_label_dec, state);
     if (state == SMART_PANNEL_BG_STATE_ON) {
         lv_obj_add_flag(_btn_inc, LV_OBJ_FLAG_CLICKABLE);
@@ -161,12 +139,10 @@ void ui_air_bg_change_state(lv_state_t state)
         lv_obj_clear_flag(_btn_dec, LV_OBJ_FLAG_CLICKABLE);
     }
     // Target temperature label
-    lv_obj_clear_state(_label_target_temp, _state);
+    lv_obj_clear_state(_label_target_temp, ~state);
     lv_obj_add_state(_label_target_temp, state);
-    lv_obj_clear_state(_label_target_symb, _state);
+    lv_obj_clear_state(_label_target_symb, ~state);
     lv_obj_add_state(_label_target_symb, state);
-
-    _state = state;
 }
 
 void ui_air_bg_indoor_temp_set(int temp)
