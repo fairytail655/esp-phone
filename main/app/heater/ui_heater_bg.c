@@ -1,6 +1,6 @@
 #include "smart_pannel.h"
-#include "ui_air_conf.h"
-#include "ui_air_bg.h"
+#include "ui_heater_conf.h"
+#include "ui_heater_bg.h"
 
 static int *_indoor_temperature;
 static int *_target_temperature;
@@ -15,12 +15,12 @@ static void inc_btn_event(lv_event_t *e);
 static void dec_btn_event(lv_event_t *e);
 static void timer_btn_callback(struct _lv_timer_t *timer);
 
-void ui_air_bg_init(lv_obj_t *obj)
+void ui_heater_bg_init(lv_obj_t *obj)
 {
     lv_obj_t *temp = lv_label_create(obj);
     lv_obj_set_style_text_font(temp, BG_TITLE_FONT, 0);
     lv_obj_align(temp, LV_ALIGN_TOP_MID, 0, BG_TITLE_Y_OFFSET);
-    lv_label_set_text(temp, "Air Conditioner");
+    lv_label_set_text(temp, "Heater");
 
     /* Indooor temperature label "26°C" */
     temp = lv_obj_create(obj);
@@ -118,7 +118,7 @@ void ui_air_bg_init(lv_obj_t *obj)
     lv_obj_set_style_text_color(_label_target_symb, BG_COLOR_D_2, INTERFACE_STATE_OFF);
 }
 
-void ui_air_bg_change_state(smart_pannel_state_t state)
+void ui_heater_bg_change_state(smart_pannel_state_t state)
 {
     // Indoor temperature label
     lv_obj_clear_state(_label_indoor_temp, ~state);
@@ -145,7 +145,7 @@ void ui_air_bg_change_state(smart_pannel_state_t state)
     lv_obj_add_state(_label_target_symb, state);
 }
 
-void ui_air_bg_indoor_temp_set(int *temp)
+void ui_heater_bg_indoor_temp_set(int *temp)
 {
     if ((temp == NULL) ||
         (*temp >= BG_TEMP_MAX) ||
@@ -158,7 +158,7 @@ void ui_air_bg_indoor_temp_set(int *temp)
     lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_bg_indoor_temp_inc(void)
+void ui_heater_bg_indoor_temp_inc(void)
 {
     if ( (_indoor_temperature == NULL) ||
         (*_indoor_temperature >= BG_TEMP_MAX))
@@ -169,7 +169,7 @@ void ui_air_bg_indoor_temp_inc(void)
     lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_bg_indoor_temp_dec(void)
+void ui_heater_bg_indoor_temp_dec(void)
 {
     if ((_indoor_temperature == NULL) ||
         (*_indoor_temperature <= BG_TEMP_MIN))
@@ -180,7 +180,7 @@ void ui_air_bg_indoor_temp_dec(void)
     lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_bg_target_temp_set(int *temp)
+void ui_heater_bg_target_temp_set(int *temp)
 {
     if ((temp == NULL) ||
         (*temp >= BG_TEMP_MAX) ||
@@ -193,7 +193,7 @@ void ui_air_bg_target_temp_set(int *temp)
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_bg_target_temp_inc(void)
+void ui_heater_bg_target_temp_inc(void)
 {
     if ((_target_temperature == NULL) ||
         (*_target_temperature >= BG_TEMP_MAX))
@@ -204,7 +204,7 @@ void ui_air_bg_target_temp_inc(void)
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_bg_target_temp_dec(void)
+void ui_heater_bg_target_temp_dec(void)
 {
     if ((_target_temperature == NULL) ||
         (*_target_temperature <= BG_TEMP_MIN))
@@ -220,7 +220,7 @@ static void inc_btn_event(lv_event_t *e)
     switch (lv_event_get_code(e)) {
         case LV_EVENT_PRESSED:
             _inc_flag = true;
-            ui_air_bg_target_temp_inc();
+            ui_heater_bg_target_temp_inc();
             lv_timer_reset(_timer_btn);
             lv_timer_resume(_timer_btn);
             break;
@@ -237,7 +237,7 @@ static void dec_btn_event(lv_event_t *e)
     switch (lv_event_get_code(e)) {
         case LV_EVENT_PRESSED:
             _inc_flag = false;
-            ui_air_bg_target_temp_dec();
+            ui_heater_bg_target_temp_dec();
             lv_timer_reset(_timer_btn);
             lv_timer_resume(_timer_btn);
             break;
@@ -252,9 +252,9 @@ static void dec_btn_event(lv_event_t *e)
 static void timer_btn_callback(struct _lv_timer_t *timer)
 {
     if (_inc_flag) {
-        ui_air_bg_target_temp_inc();
+        ui_heater_bg_target_temp_inc();
     }
     else {
-        ui_air_bg_target_temp_dec();
+        ui_heater_bg_target_temp_dec();
     }
 }

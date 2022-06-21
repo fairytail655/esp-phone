@@ -1,8 +1,7 @@
-#include "interface/interface_conf.h"
 #include "utils/utils.h"
 #include "bg_screen.h"
 
-static bg_board_state_t _state;
+static interface_state_t _state;
 static lv_obj_t *_scr = NULL;
 
 static lv_obj_t *_label_switch;
@@ -45,10 +44,10 @@ void bg_init(void)
     lv_obj_add_flag(_label_switch, LV_OBJ_FLAG_FLOATING);
 
     _label_on = lv_label_create(_label_switch);
-    lv_obj_set_style_text_font(_label_on, LABEL_SWITCH_FONT_L, BG_BOARD_STATE_ON);
-    lv_obj_set_style_text_color(_label_on, LABEL_COLOR_L_1, BG_BOARD_STATE_ON);
-    lv_obj_set_style_text_font(_label_on, LABEL_SWITCH_FONT_S, BG_BOARD_STATE_OFF);
-    lv_obj_set_style_text_color(_label_on, LABEL_COLOR_D_1, BG_BOARD_STATE_OFF);
+    lv_obj_set_style_text_font(_label_on, LABEL_SWITCH_FONT_L, INTERFACE_STATE_ON);
+    lv_obj_set_style_text_color(_label_on, LABEL_COLOR_L_1, INTERFACE_STATE_ON);
+    lv_obj_set_style_text_font(_label_on, LABEL_SWITCH_FONT_S, INTERFACE_STATE_OFF);
+    lv_obj_set_style_text_color(_label_on, LABEL_COLOR_D_1, INTERFACE_STATE_OFF);
     lv_label_set_text(_label_on, "ON");
 
     lv_obj_t *temp = lv_label_create(_label_switch);
@@ -56,10 +55,10 @@ void bg_init(void)
     lv_label_set_text(temp, "/");
 
     _label_off = lv_label_create(_label_switch);
-    lv_obj_set_style_text_font(_label_off, LABEL_SWITCH_FONT_S, BG_BOARD_STATE_ON);
-    lv_obj_set_style_text_color(_label_off, LABEL_COLOR_D_1, BG_BOARD_STATE_ON);
-    lv_obj_set_style_text_font(_label_off, LABEL_SWITCH_FONT_L, BG_BOARD_STATE_OFF);
-    lv_obj_set_style_text_color(_label_off, LABEL_COLOR_L_1, BG_BOARD_STATE_OFF);
+    lv_obj_set_style_text_font(_label_off, LABEL_SWITCH_FONT_S, INTERFACE_STATE_ON);
+    lv_obj_set_style_text_color(_label_off, LABEL_COLOR_D_1, INTERFACE_STATE_ON);
+    lv_obj_set_style_text_font(_label_off, LABEL_SWITCH_FONT_L, INTERFACE_STATE_OFF);
+    lv_obj_set_style_text_color(_label_off, LABEL_COLOR_L_1, INTERFACE_STATE_OFF);
     lv_label_set_text(_label_off, "OFF");
 
     /* Switch button */
@@ -108,16 +107,16 @@ void bg_init(void)
     lv_obj_add_event_cb(_img_more, img_more_click_event, LV_EVENT_CLICKED, NULL);
 }
 
-void bg_change_state(bg_board_state_t state)
+void bg_change_state(interface_state_t state)
 {
     // Background Board
     bg_board_change_state(state);
     // Switch button
-    if (state == BG_BOARD_STATE_ON) {
+    if (state == INTERFACE_STATE_ON) {
         LV_IMG_DECLARE(img_switch_on);
         lv_img_set_src(_img_switch, &img_switch_on);
     }
-    else if (state == BG_BOARD_STATE_OFF) {
+    else if (state == INTERFACE_STATE_OFF) {
         LV_IMG_DECLARE(img_switch_off);
         lv_img_set_src(_img_switch, &img_switch_off);
     }
@@ -172,11 +171,11 @@ void bg_show_more(bool en)
 
 static void img_switch_click_event(lv_event_t * e)
 {
-    if (_state == BG_BOARD_STATE_ON) {
-        bg_change_state(BG_BOARD_STATE_OFF);
+    if (_state == INTERFACE_STATE_ON) {
+        bg_change_state(INTERFACE_STATE_OFF);
     }
     else {
-        bg_change_state(BG_BOARD_STATE_ON);
+        bg_change_state(INTERFACE_STATE_ON);
     }
     if (_switch_callback)
         _switch_callback(e);

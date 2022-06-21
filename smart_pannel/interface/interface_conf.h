@@ -1,14 +1,17 @@
 #ifndef INTERFACE_CONF_H
 #define INTERFACE_CONF_H
 
+#include "lvgl.h"
 #include "smart_pannel_conf.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define INTERFACE_STATE_OFF                 0
-#define INTERFACE_STATE_ON                  LV_STATE_USER_1
+typedef enum {
+    INTERFACE_STATE_ON      = 0,
+    INTERFACE_STATE_OFF     = LV_STATE_USER_1,
+} interface_state_t;
 
 /* Background Srceen */
 // Wallpaper

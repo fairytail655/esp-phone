@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 
     smart_pannel_init();
     air_conditioner_init();
+    heater_init();
     // smart_pannel_set_default_app(1);
 
     while(1) {

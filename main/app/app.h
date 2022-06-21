@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include "air_conditioner/air_conditioner.h"
+#include "heater/heater.h"
 
 #ifdef __cplusplus
 }

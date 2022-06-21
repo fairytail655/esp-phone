@@ -21,6 +21,10 @@ extern "C" {
 /* Utils */
 #define OBJ_CONF_BORDER_EN                  1
 
+/* Motion Detect */
+#define MOTION_DET_SAMPLE_PERIOD            1000
+#define MOTION_DET_THRESHOLD                100
+
 /* Log */
 #define LOG_TRACE_GUI                       1
 
