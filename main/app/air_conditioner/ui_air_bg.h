@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-void ui_air_bg_init(lv_obj_t *obj);
+void ui_air_bg_init(lv_obj_t *obj, smart_pannel_bg_state_t state);
 void ui_air_bg_register_callback_more_click(lv_event_cb_t func);
 void ui_air_bg_change_state(lv_state_t state);
 void ui_air_bg_indoor_temp_set(int temp);

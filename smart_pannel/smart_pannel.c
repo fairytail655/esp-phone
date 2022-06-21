@@ -15,7 +15,7 @@ void smart_pannel_install_app(app_t *app)
 
     obj = bg_board_regiser_obj();
     if (app->bg_screen_init != NULL)
-        app->bg_screen_init(obj);
+        app->bg_screen_init(obj, SMART_PANNEL_BG_STATE_OFF);
 
     obj = fg_screen_regiser_obj();
     if (app->fg_screen_init != NULL)

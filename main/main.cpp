@@ -28,8 +28,8 @@ int main(int argc, char **argv)
     hal_init();
 
     smart_pannel_init();
-    air_conditioner_init();
-    smart_pannel_set_default_app(1);
+    // air_conditioner_init();
+    // smart_pannel_set_default_app(1);
 
     while(1) {
         lv_timer_handler();

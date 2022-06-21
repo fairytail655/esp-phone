@@ -26,16 +26,27 @@ extern "C" {
 #define BG_BOARD_OBJ_OPA_OFF                20
 #define BG_BOARD_OBJ_COLOR_OFF              lv_color_hex(0x0)
 // Status Bar
-#define STATUS_BAR_WIDTH                     LV_HOR_RES
-#define STATUS_BAR_HEIGHT                    24
-#define STATUS_BAR_BG_COLOR                  BG_WALLPAPER_COLOR
-#define STATUS_BAR_ICON_SIZE                 20
-#define STATUS_BAR_AREA_OFFSET               10
-#define STATUS_BAR_AREA_LEFT_PERCENT         30
-#define STATUS_BAR_AREA_RIGHT_PERCENT        30
-#define STATUS_BAR_AREA_PAD                  3
-#define STATUS_BAR_CLOCK_FONT                &lv_font_montserrat_14
-#define STATUS_BAR_BATTERY_FONT              &lv_font_montserrat_12
+#define STATUS_BAR_WIDTH                    LV_HOR_RES
+#define STATUS_BAR_HEIGHT                   24
+#define STATUS_BAR_BG_COLOR                 BG_WALLPAPER_COLOR
+#define STATUS_BAR_ICON_SIZE                20
+#define STATUS_BAR_AREA_OFFSET              10
+#define STATUS_BAR_AREA_LEFT_PERCENT        30
+#define STATUS_BAR_AREA_RIGHT_PERCENT       30
+#define STATUS_BAR_AREA_PAD                 3
+#define STATUS_BAR_CLOCK_FONT               &lv_font_montserrat_14
+#define STATUS_BAR_BATTERY_FONT             &lv_font_montserrat_12
+// Label "ON/OFF"
+#define LABEL_SWITCH_FONT_L                 &lv_font_montserrat_24
+#define LABEL_SWITCH_FONT_S                 &lv_font_montserrat_16
+#define LABEL_SWITCH_X_OFFSET               20
+#define LABEL_SWITCH_Y_OFFEST               20
+#define LABEL_SWITCH_PAD                    5
+#define LABEL_SWITCH_ICON_SIZE              48
+#define LABEL_SWITCH_OFFSET                 40
+#define LABEL_SWITCH_ZOOM_PERCENT           130
+#define LABEL_COLOR_L_1                     lv_color_hex(0x5cc4fc)
+#define LABEL_COLOR_D_1                     lv_color_hex(0x0)
 
 /* Foreground Screen */
 // Navigate Bar

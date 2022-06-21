@@ -12,7 +12,7 @@ static lv_obj_t *_spot_obj = NULL;
 static uint8_t _app_index = 0;
 static lv_ll_t _app_ll;
 
-void bg_board_init(lv_obj_t *scr)
+lv_obj_t *bg_board_init(lv_obj_t *scr)
 {
     _obj = lv_obj_create(scr);
     lv_obj_set_size(_obj, BG_BOARD_WIDTH, BG_BOARD_HEIGHT);
@@ -43,6 +43,8 @@ void bg_board_init(lv_obj_t *scr)
     _lv_ll_init(&_app_ll, sizeof(bg_board_app_t));
 
     INTERFACE_TRACE("bg_board init finish");
+
+    return _obj;
 }
 
 lv_obj_t *bg_board_regiser_obj(void)

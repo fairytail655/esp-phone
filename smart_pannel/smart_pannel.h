@@ -9,8 +9,13 @@
 extern "C" {
 #endif
 
+typedef enum {
+    SMART_PANNEL_BG_STATE_ON = 0,
+    SMART_PANNEL_BG_STATE_OFF = LV_STATE_USER_1,
+} smart_pannel_bg_state_t;
+
 typedef struct {
-    void (*bg_screen_init)(lv_obj_t *obj);
+    void (*bg_screen_init)(lv_obj_t *obj, int smart_pannel_bg_state_t);
     void (*fg_screen_init)(lv_obj_t *obj);
     lv_event_cb_t fg_screen_back_callback;
 } app_t;
