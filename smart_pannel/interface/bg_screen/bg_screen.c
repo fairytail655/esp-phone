@@ -147,6 +147,30 @@ void bg_screen_register_callback_more(lv_event_cb_t callback)
     _more_click_event = callback;
 }
 
+void bg_screen_show_label(bool en)
+{
+    if (en)
+        lv_obj_clear_flag(_label_switch, LV_OBJ_FLAG_HIDDEN);
+    else
+        lv_obj_add_flag(_label_switch, LV_OBJ_FLAG_HIDDEN);
+}
+
+void bg_screen_show_switch(bool en)
+{
+    if (en)
+        lv_obj_clear_flag(_img_switch, LV_OBJ_FLAG_HIDDEN);
+    else
+        lv_obj_add_flag(_img_switch, LV_OBJ_FLAG_HIDDEN);
+}
+
+void bg_screen_show_more(bool en)
+{
+    if (en)
+        lv_obj_clear_flag(_img_more, LV_OBJ_FLAG_HIDDEN);
+    else
+        lv_obj_add_flag(_img_more, LV_OBJ_FLAG_HIDDEN);
+}
+
 static void img_switch_click_event(lv_event_t * e)
 {
     if (_state == BG_BOARD_STATE_ON) {

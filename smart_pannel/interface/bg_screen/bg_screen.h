@@ -14,6 +14,9 @@ void bg_screen_init(void);
 void bg_screen_show(void);
 void bg_screen_change_state(bg_board_state_t state);
 void bg_screen_register_callback_more(lv_event_cb_t callback);
+void bg_screen_show_label(bool en);
+void bg_screen_show_switch(bool en);
+void bg_screen_show_more(bool en);
 
 #ifdef __cplusplus
 }
