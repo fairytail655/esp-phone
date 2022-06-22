@@ -42,8 +42,8 @@ typedef enum {
 // Label "ON/OFF"
 #define LABEL_SWITCH_FONT_L                 &lv_font_montserrat_24
 #define LABEL_SWITCH_FONT_S                 &lv_font_montserrat_16
-#define LABEL_SWITCH_X_OFFSET               20
-#define LABEL_SWITCH_Y_OFFEST               20
+#define LABEL_SWITCH_X_OFFSET               10
+#define LABEL_SWITCH_Y_OFFEST               10
 #define LABEL_SWITCH_PAD                    5
 #define LABEL_COLOR_L_1                     lv_color_hex(0x5cc4fc)
 #define LABEL_COLOR_D_1                     lv_color_hex(0x0)

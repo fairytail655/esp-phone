@@ -15,7 +15,7 @@ LV_FONT_DECLARE(my_font_bold_60);
 
 /* Background Screen */
 #define BG_TITLE_Y_OFFSET           20
-#define BG_TITLE_FONT               &lv_font_montserrat_16
+#define BG_TITLE_FONT               &lv_font_montserrat_20
 #define BG_COLOR_L_2                lv_color_hex(0x04b4fc)
 #define BG_COLOR_D_2                lv_color_hex(0x7e7e7e)
 #define BG_TEMP_PAD                 0
