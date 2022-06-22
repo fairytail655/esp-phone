@@ -244,7 +244,7 @@ static void bg_more_click_event(lv_event_t *e)
     if (callbadck)
         callbadck(e);
 
-    fg_show();
+    smart_pannel_swtich_to_fg();
 }
 
 static void fg_back_click_event(lv_event_t *e)

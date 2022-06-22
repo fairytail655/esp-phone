@@ -2,6 +2,7 @@
 #include "ui_heater_conf.h"
 #include "ui_heater_fg.h"
 
+static void btns_enable(bool en);
 static void mode_btns_init(lv_obj_t *obj);
 static void degree_btns_init(lv_obj_t *obj);
 static void target_temp_inc(void);
@@ -10,7 +11,6 @@ static void inc_btn_event(lv_event_t *e);
 static void dec_btn_event(lv_event_t *e);
 static void timer_btn_callback(struct _lv_timer_t *timer);
 
-static int *_target_temperature;
 static lv_obj_t *_label_target_temp;
 static lv_obj_t *_label_target_symb;
 static lv_obj_t *_btn_inc, *_btn_dec;
@@ -18,8 +18,8 @@ static lv_obj_t *_label_inc, *_label_dec;
 static lv_timer_t *_timer_btn;
 static bool _inc_flag = true;
 static lv_event_cb_t _inc_event_cb, _dec_event_cb;
-static lv_obj_t *_mode_btns[5];
-static lv_obj_t *_degree_btns[5];
+static lv_obj_t *_mode_btns[3];
+static lv_obj_t *_degree_btns[3];
 
 void ui_heater_fg_init(lv_obj_t *obj)
 {
@@ -61,7 +61,7 @@ void ui_heater_fg_init(lv_obj_t *obj)
     _timer_btn = lv_timer_create(timer_btn_callback, FG_TEMP_BTN_PERIOD, NULL);
     lv_timer_pause(_timer_btn);
 
-    /* Target temperature label "23°C"   */
+    /* Target temperature label "35°C"   */
     _label_target_temp = lv_label_create(obj);
     lv_obj_set_style_text_font(_label_target_temp, FG_TEMP_FONT_S, 0);
     lv_obj_align(_label_target_temp, LV_ALIGN_TOP_MID, 0, FG_TEMP_BTN_OFFSET);
@@ -107,9 +107,14 @@ void ui_heater_fg_change_state(smart_pannel_state_t state)
     lv_obj_add_state(_label_target_temp, state);
     lv_obj_clear_state(_label_target_symb, ~state);
     lv_obj_add_state(_label_target_symb, state);
+    // Btns
+    if (state == INTERFACE_STATE_OFF)
+        btns_enable(false);
+    else
+        btns_enable(true);
 }
 
-void ui_heater_fg_target_temp_set(int temp)
+void ui_heater_fg_water_temp_set(int temp)
 {
     if ((temp >= TEMP_MAX) ||
         (temp <= TEMP_MIN))
@@ -120,35 +125,40 @@ void ui_heater_fg_target_temp_set(int temp)
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
+static void btns_enable(bool en)
+{
+    if (!en) {
+        for (int i = 0; i < 3; i++) {
+            lv_obj_clear_flag(_mode_btns[i], LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_clear_state(_mode_btns[i], LV_STATE_CHECKED);
+            lv_obj_clear_flag(_degree_btns[i], LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_clear_state(_degree_btns[i], LV_STATE_CHECKED);
+        }
+    }
+    else {
+        for (int i = 0; i < 3; i++) {
+            lv_obj_add_flag(_mode_btns[i], LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_add_flag(_degree_btns[i], LV_OBJ_FLAG_CLICKABLE);
+        }
+    }
+}
+
 static void mode_btns_init(lv_obj_t *obj)
 {
-    // Container
-    lv_obj_t *temp = lv_obj_create(obj);
+    // Button Container
+    lv_obj_t *temp2 = lv_obj_create(obj);
     obj_conf_style_t style = {
         .width = MODE_CONT_WIDTH,
         .height = MODE_CONT_HEIGHT,
         .pos_flag = OBJ_POS_FLAG_ALIGN_OFFSET,
-        .align = LV_ALIGN_TOP_MID,
+        .align = LV_ALIGN_BOTTOM_MID,
         .x_offset = 0,
-        .y_offset = MODE_CONT_OFFSET,
+        .y_offset = -MODE_CONT_OFFSET-MODE_CONT_HEIGHT,
         .radius = 0,
         .border_width = 0,
-        .pad_all = MODE_CONT_PAD,
+        .pad_all = 0,
         .bg_opa = LV_OPA_TRANSP,
     };
-    obj_conf_style(temp, &style);
-    lv_obj_clear_flag(temp, LV_OBJ_FLAG_SCROLLABLE);
-    // Title
-    lv_obj_t *title = lv_label_create(temp);
-    lv_obj_set_style_text_font(title, MODE_TITLE_FONT, 0);
-    lv_label_set_text(title, "Mode");
-    lv_obj_set_align(title, LV_ALIGN_TOP_LEFT);
-    // Button Container
-    lv_obj_t *temp2 = lv_obj_create(temp);
-    lv_obj_refr_size(title);
-    style.height = MODE_CONT_HEIGHT - lv_obj_get_height(title);
-    style.pos_flag = OBJ_POS_FLAG_ALIGN,
-    style.align = LV_ALIGN_BOTTOM_MID,
     obj_conf_style(temp2, &style);
     lv_obj_set_flex_flow(temp2, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(temp2, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -161,92 +171,64 @@ static void mode_btns_init(lv_obj_t *obj)
     lv_obj_set_height(_mode_btns[0], height);
     lv_obj_set_flex_grow(_mode_btns[0], 1);
     lv_obj_add_flag(_mode_btns[0], LV_OBJ_FLAG_CHECKABLE);
+    lv_obj_set_style_border_width(_mode_btns[0], 1, 0);
+    lv_obj_set_style_border_color(_mode_btns[0], lv_color_white(), 0);
+    lv_obj_set_style_radius(_mode_btns[0], MODE_BTN_RADIUS, 0);
     lv_obj_set_style_bg_color(_mode_btns[0], MODE_BTN_COLOR_ON, LV_STATE_CHECKED);
     lv_obj_set_style_bg_color(_mode_btns[0], MODE_BTN_COLOR_OFF, 0);
-    temp = lv_label_create(_mode_btns[0]);
+    lv_obj_t *temp = lv_label_create(_mode_btns[0]);
     lv_obj_set_style_text_font(temp, MODE_BTN_FONT, 0);
     lv_obj_set_style_text_color(temp, MODE_BTN_FONT_COLOR, 0);
-    lv_label_set_text(temp, "Auto");
+    lv_label_set_text(temp, "Save Mode");
     lv_obj_center(temp);
 
     _mode_btns[1] = lv_btn_create(temp2);
     lv_obj_set_height(_mode_btns[1], height);
     lv_obj_set_flex_grow(_mode_btns[1], 1);
     lv_obj_add_flag(_mode_btns[1], LV_OBJ_FLAG_CHECKABLE);
+    lv_obj_set_style_border_width(_mode_btns[1], 1, 0);
+    lv_obj_set_style_border_color(_mode_btns[1], lv_color_white(), 0);
+    lv_obj_set_style_radius(_mode_btns[1], MODE_BTN_RADIUS, 0);
     lv_obj_set_style_bg_color(_mode_btns[1], MODE_BTN_COLOR_ON, LV_STATE_CHECKED);
     lv_obj_set_style_bg_color(_mode_btns[1], MODE_BTN_COLOR_OFF, 0);
     temp = lv_label_create(_mode_btns[1]);
     lv_obj_set_style_text_font(temp, MODE_BTN_FONT, 0);
     lv_obj_set_style_text_color(temp, MODE_BTN_FONT_COLOR, 0);
-    lv_label_set_text(temp, "Heat");
+    lv_label_set_text(temp, "High Capacity");
     lv_obj_center(temp);
 
     _mode_btns[2] = lv_btn_create(temp2);
     lv_obj_set_height(_mode_btns[2], height);
     lv_obj_set_flex_grow(_mode_btns[2], 1);
     lv_obj_add_flag(_mode_btns[2], LV_OBJ_FLAG_CHECKABLE);
+    lv_obj_set_style_border_width(_mode_btns[2], 1, 0);
+    lv_obj_set_style_border_color(_mode_btns[2], lv_color_white(), 0);
+    lv_obj_set_style_radius(_mode_btns[2], MODE_BTN_RADIUS, 0);
     lv_obj_set_style_bg_color(_mode_btns[2], MODE_BTN_COLOR_ON, LV_STATE_CHECKED);
     lv_obj_set_style_bg_color(_mode_btns[2], MODE_BTN_COLOR_OFF, 0);
     temp = lv_label_create(_mode_btns[2]);
     lv_obj_set_style_text_font(temp, MODE_BTN_FONT, 0);
     lv_obj_set_style_text_color(temp, MODE_BTN_FONT_COLOR, 0);
-    lv_label_set_text(temp, "Freeze");
-    lv_obj_center(temp);
-
-    _mode_btns[3] = lv_btn_create(temp2);
-    lv_obj_set_height(_mode_btns[3], height);
-    lv_obj_set_flex_grow(_mode_btns[3], 1);
-    lv_obj_add_flag(_mode_btns[3], LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_set_style_bg_color(_mode_btns[3], MODE_BTN_COLOR_ON, LV_STATE_CHECKED);
-    lv_obj_set_style_bg_color(_mode_btns[3], MODE_BTN_COLOR_OFF, 0);
-    temp = lv_label_create(_mode_btns[3]);
-    lv_obj_set_style_text_font(temp, MODE_BTN_FONT, 0);
-    lv_obj_set_style_text_color(temp, MODE_BTN_FONT_COLOR, 0);
-    lv_label_set_text(temp, "Wind");
-    lv_obj_center(temp);
-
-    _mode_btns[4] = lv_btn_create(temp2);
-    lv_obj_set_height(_mode_btns[4], height);
-    lv_obj_set_flex_grow(_mode_btns[4], 1);
-    lv_obj_add_flag(_mode_btns[4], LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_set_style_bg_color(_mode_btns[4], MODE_BTN_COLOR_ON, LV_STATE_CHECKED);
-    lv_obj_set_style_bg_color(_mode_btns[4], MODE_BTN_COLOR_OFF, 0);
-    temp = lv_label_create(_mode_btns[4]);
-    lv_obj_set_style_text_font(temp, MODE_BTN_FONT, 0);
-    lv_obj_set_style_text_color(temp, MODE_BTN_FONT_COLOR, 0);
-    lv_label_set_text(temp, "Dry");
+    lv_label_set_text(temp, "Bath");
     lv_obj_center(temp);
 }
 
 static void degree_btns_init(lv_obj_t *obj)
 {
-    // Container
-    lv_obj_t *temp = lv_obj_create(obj);
+    // Button Container
+    lv_obj_t *temp2 = lv_obj_create(obj);
     obj_conf_style_t style = {
         .width = MODE_CONT_WIDTH,
         .height = MODE_CONT_HEIGHT,
         .pos_flag = OBJ_POS_FLAG_ALIGN_OFFSET,
-        .align = LV_ALIGN_TOP_MID,
+        .align = LV_ALIGN_BOTTOM_MID,
         .x_offset = 0,
-        .y_offset = MODE_CONT_OFFSET + MODE_CONT_HEIGHT,
+        .y_offset = -MODE_CONT_OFFSET,
         .radius = 0,
         .border_width = 0,
-        .pad_all = MODE_CONT_PAD,
+        .pad_all = 0,
         .bg_opa = LV_OPA_TRANSP,
     };
-    obj_conf_style(temp, &style);
-    lv_obj_clear_flag(temp, LV_OBJ_FLAG_SCROLLABLE);
-    // Title
-    lv_obj_t *title = lv_label_create(temp);
-    lv_obj_set_style_text_font(title, MODE_TITLE_FONT, 0);
-    lv_label_set_text(title, "Degree");
-    lv_obj_set_align(title, LV_ALIGN_TOP_LEFT);
-    // Button Container
-    lv_obj_t *temp2 = lv_obj_create(temp);
-    lv_obj_refr_size(title);
-    style.height = MODE_CONT_HEIGHT - lv_obj_get_height(title);
-    style.pos_flag = OBJ_POS_FLAG_ALIGN,
-    style.align = LV_ALIGN_BOTTOM_MID,
     obj_conf_style(temp2, &style);
     lv_obj_set_flex_flow(temp2, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(temp2, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -257,65 +239,48 @@ static void degree_btns_init(lv_obj_t *obj)
     _degree_btns[0] = lv_btn_create(temp2);
     int height = style.height * MODE_BTN_H_PERCENT / 100;
     lv_obj_set_height(_degree_btns[0], height);
+    lv_obj_set_style_border_width(_degree_btns[0], 1, 0);
+    lv_obj_set_style_border_color(_degree_btns[0], lv_color_white(), 0);
+    lv_obj_set_style_radius(_degree_btns[0], MODE_BTN_RADIUS, 0);
     lv_obj_set_flex_grow(_degree_btns[0], 1);
     lv_obj_add_flag(_degree_btns[0], LV_OBJ_FLAG_CHECKABLE);
     lv_obj_set_style_bg_color(_degree_btns[0], MODE_BTN_COLOR_ON, LV_STATE_CHECKED);
     lv_obj_set_style_bg_color(_degree_btns[0], MODE_BTN_COLOR_OFF, 0);
-    temp = lv_label_create(_degree_btns[0]);
+    lv_obj_t *temp = lv_label_create(_degree_btns[0]);
     lv_obj_set_style_text_font(temp, MODE_BTN_FONT, 0);
     lv_obj_set_style_text_color(temp, MODE_BTN_FONT_COLOR, 0);
-    lv_label_set_text(temp, "Auto");
+    lv_label_set_text(temp, "Bacteriostasis");
     lv_obj_center(temp);
 
     _degree_btns[1] = lv_btn_create(temp2);
     lv_obj_set_height(_degree_btns[1], height);
     lv_obj_set_flex_grow(_degree_btns[1], 1);
     lv_obj_add_flag(_degree_btns[1], LV_OBJ_FLAG_CHECKABLE);
+    lv_obj_set_style_border_width(_degree_btns[1], 1, 0);
+    lv_obj_set_style_border_color(_degree_btns[1], lv_color_white(), 0);
+    lv_obj_set_style_radius(_degree_btns[1], MODE_BTN_RADIUS, 0);
     lv_obj_set_style_bg_color(_degree_btns[1], MODE_BTN_COLOR_ON, LV_STATE_CHECKED);
     lv_obj_set_style_bg_color(_degree_btns[1], MODE_BTN_COLOR_OFF, 0);
     temp = lv_label_create(_degree_btns[1]);
     lv_obj_set_style_text_font(temp, MODE_BTN_FONT, 0);
     lv_obj_set_style_text_color(temp, MODE_BTN_FONT_COLOR, 0);
-    lv_label_set_text(temp, "High");
+    lv_label_set_text(temp, "Fast Heat");
     lv_obj_center(temp);
 
     _degree_btns[2] = lv_btn_create(temp2);
     lv_obj_set_height(_degree_btns[2], height);
     lv_obj_set_flex_grow(_degree_btns[2], 1);
     lv_obj_add_flag(_degree_btns[2], LV_OBJ_FLAG_CHECKABLE);
+    lv_obj_set_style_border_width(_degree_btns[2], 1, 0);
+    lv_obj_set_style_border_color(_degree_btns[2], lv_color_white(), 0);
+    lv_obj_set_style_radius(_degree_btns[2], MODE_BTN_RADIUS, 0);
     lv_obj_set_style_bg_color(_degree_btns[2], MODE_BTN_COLOR_ON, LV_STATE_CHECKED);
     lv_obj_set_style_bg_color(_degree_btns[2], MODE_BTN_COLOR_OFF, 0);
     temp = lv_label_create(_degree_btns[2]);
     lv_obj_set_style_text_font(temp, MODE_BTN_FONT, 0);
     lv_obj_set_style_text_color(temp, MODE_BTN_FONT_COLOR, 0);
-    lv_label_set_text(temp, "Mid");
+    lv_label_set_text(temp, "Cloud");
     lv_obj_center(temp);
-
-    _degree_btns[3] = lv_btn_create(temp2);
-    lv_obj_set_height(_degree_btns[3], height);
-    lv_obj_set_flex_grow(_degree_btns[3], 1);
-    lv_obj_add_flag(_degree_btns[3], LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_set_style_bg_color(_degree_btns[3], MODE_BTN_COLOR_ON, LV_STATE_CHECKED);
-    lv_obj_set_style_bg_color(_degree_btns[3], MODE_BTN_COLOR_OFF, 0);
-    temp = lv_label_create(_degree_btns[3]);
-    lv_obj_set_style_text_font(temp, MODE_BTN_FONT, 0);
-    lv_obj_set_style_text_color(temp, MODE_BTN_FONT_COLOR, 0);
-    lv_label_set_text(temp, "Low");
-    lv_obj_center(temp);
-
-    _degree_btns[4] = lv_btn_create(temp2);
-    lv_obj_remove_style_all(_degree_btns[4]);
-    lv_obj_set_height(_degree_btns[4], height);
-    lv_obj_set_flex_grow(_degree_btns[4], 1);
-    lv_obj_add_flag(_degree_btns[4], LV_OBJ_FLAG_CHECKABLE);
-    lv_obj_set_style_bg_color(_degree_btns[4], MODE_BTN_COLOR_ON, LV_STATE_CHECKED);
-    lv_obj_set_style_bg_color(_degree_btns[4], MODE_BTN_COLOR_OFF, 0);
-    temp = lv_label_create(_degree_btns[4]);
-    lv_obj_set_style_text_font(temp, MODE_BTN_FONT, 0);
-    lv_obj_set_style_text_color(temp, MODE_BTN_FONT_COLOR, 0);
-    lv_label_set_text(temp, "Low");
-    lv_obj_center(temp);
-    lv_obj_set_style_opa(_degree_btns[4], LV_OPA_TRANSP, 0);
 }
 
 static void target_temp_inc(void)

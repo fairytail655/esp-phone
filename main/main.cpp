@@ -30,8 +30,8 @@ int main(int argc, char **argv)
     hal_init();
 
     smart_pannel_init();
-    // air_conditioner_init();
-    heater_init();
+    air_conditioner_init();
+    // heater_init();
 
     while(1) {
         lv_timer_handler();

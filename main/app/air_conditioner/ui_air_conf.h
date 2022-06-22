@@ -53,9 +53,12 @@ LV_FONT_DECLARE(my_font_bold_60);
 #define MODE_CONT_OFFSET            (FG_TEMP_BTN_OFFSET + FG_TEMP_BTN_H + 20)
 #define MODE_CONT_HEIGHT            ((LV_VER_RES - NAVIGATE_BAR_HEIGHT -  MODE_CONT_OFFSET) / 3)
 #define MODE_CONT_PAD               0
-#define MODE_TITLE_FONT             &lv_font_montserrat_24
-#define MODE_BTN_FONT               &lv_font_montserrat_20
+#define MODE_BTN_FONT               &lv_font_montserrat_16
 #define MODE_BTN_FONT_COLOR         lv_color_hex(0x7e7e7e)
+#define MODE_BTN_COLOR              lv_color_hex(0xa4b0be)
+#define MODE_TITLE_FONT             &lv_font_montserrat_20
+#define MODE_BTN_OPA                LV_OPA_40
+#define MODE_BTN_RADIUS             15
 #define MODE_BTN_PAD                20
 #define MODE_BTN_H_PERCENT          70
 #define MODE_BTN_COLOR_ON           lv_color_hex(0x04b4fc)

@@ -37,19 +37,22 @@ void heater_init(void)
 {
     smart_pannel_install_app(&app_air_cond);
     ui_heater_bg_register_cb(bg_heat_click_event, bg_rest_click_event);
+    ui_heater_fg_register_cb(water_temp_inc_event, water_temp_dec_event);
 
     ui_heater_bg_water_temp_set(water_temperature);
-    switch_click_event(NULL);
+    ui_heater_bg_change_state(state);
+    ui_heater_bg_heat_set_state(heat_state);
+    ui_heater_bg_rest_set_state(rest_state);
+    ui_heater_fg_change_state(state);
 
-    // ui_heater_fg_water_temp_set(water_temperature);
-    // ui_heater_fg_register_cb(water_temp_inc_event, water_temp_dec_event);
+    ui_heater_fg_water_temp_set(water_temperature);
 }
 
 static void water_temp_inc_event(lv_event_t *e)
 {
     if (water_temperature < TEMP_MAX) {
         ui_heater_bg_water_temp_set(++water_temperature);
-        // ui_heater_fg_water_temp_set(water_temperature);
+        ui_heater_fg_water_temp_set(water_temperature);
     }
 }
 
@@ -57,7 +60,7 @@ static void water_temp_dec_event(lv_event_t *e)
 {
     if (water_temperature > TEMP_MIN) {
         ui_heater_bg_water_temp_set(--water_temperature);
-        // ui_heater_fg_water_temp_set(water_temperature);
+        ui_heater_fg_water_temp_set(water_temperature);
     }
 }
 
