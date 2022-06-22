@@ -13,6 +13,8 @@
 #include "smart_pannel.h"
 #include "app/app.h"
 
+lv_indev_t *mouse_indev;
+
 static void hal_init(void);
 static int tick_thread(void *data);
 
@@ -30,7 +32,6 @@ int main(int argc, char **argv)
     smart_pannel_init();
     air_conditioner_init();
     heater_init();
-    // smart_pannel_set_default_app(1);
 
     while(1) {
         lv_timer_handler();
@@ -85,7 +86,7 @@ static void hal_init(void)
 
     /*This function will be called periodically (by the library) to get the mouse position and state*/
     indev_drv_1.read_cb = mouse_read;
-    lv_indev_t *mouse_indev = lv_indev_drv_register(&indev_drv_1);
+    mouse_indev = lv_indev_drv_register(&indev_drv_1);
 
     // keyboard_init();
     // static lv_indev_drv_t indev_drv_2;

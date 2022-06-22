@@ -30,7 +30,7 @@ WARNINGS 			:= -Wall -Wextra \
 WARNINGS_CPP 		:= -Wall
 
 
-CFLAGS 				:= -O0 -g $(WARNINGS)
+CFLAGS 				:= -O0 -g $(WARNINGS) -std=c99
 
 CFLAGS_CPP 			:= -O0 -g $(WARNINGS_CPP)
 

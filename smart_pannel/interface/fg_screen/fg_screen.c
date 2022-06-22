@@ -1,5 +1,4 @@
 #include "utils/utils.h"
-#include "interface/interface_conf.h"
 #include "fg_screen.h"
 
 static lv_obj_t *_scr;
@@ -10,9 +9,11 @@ static lv_obj_t *_app_area;
 static uint8_t _app_index = 0;
 static lv_ll_t _app_ll;
 
-static lv_event_cb_t _left_area_event_callback;
+static lv_event_cb_t _left_area_event_cb;
+static lv_event_cb_t _right_sw_event_cb;
 
 static void left_area_event(lv_event_t *e);
+static void right_switch_event(lv_event_t *e);
 
 void fg_init(void)
 {
@@ -69,6 +70,7 @@ void fg_init(void)
     _switch = lv_switch_create(_navigate_bar);
     lv_obj_set_size(_switch, NAVIGATE_BAR_SW_WIDTH, NAVIGATE_BAR_SW_HEIGHT);
     lv_obj_align(_switch, LV_ALIGN_RIGHT_MID, -NAVIGATE_BAR_RIGHT_OFFSET, 0);
+    lv_obj_add_event_cb(_switch, right_switch_event, LV_EVENT_VALUE_CHANGED, NULL);
     // lv_obj_add_flag(_switch, LV_OBJ_FLAG_HIDDEN);
 
     /* App area */
@@ -83,9 +85,10 @@ void fg_init(void)
     _lv_ll_init(&_app_ll, sizeof(lv_obj_t *));
 }
 
-void fg_register_callback_back(lv_event_cb_t callback)
+void fg_register_cb_back(lv_event_cb_t left_area_cb, lv_event_cb_t right_sw_cb)
 {
-    _left_area_event_callback = callback;
+    _left_area_event_cb = left_area_cb;
+    _right_sw_event_cb = right_sw_cb;
 }
 
 lv_obj_t *fg_regiser_obj(void)
@@ -94,13 +97,14 @@ lv_obj_t *fg_regiser_obj(void)
 
     lv_obj_t *obj = lv_obj_create(_app_area);
     obj_conf_style_t style = {
-        .width = BG_BOARD_WIDTH,
-        .height = BG_BOARD_HEIGHT,
+        .width = LV_HOR_RES,
+        .height = LV_VER_RES - NAVIGATE_BAR_HEIGHT,
         .pos_flag = OBJ_POS_FLAG_ALIGN,
         .align = LV_ALIGN_CENTER,
         .border_width = 0,
         .pad_all = 0,
-        .radius = BG_BOARD_RADIUS,
+        .radius = 0,
+        .bg_opa = LV_OPA_TRANSP,
     };
     obj_conf_style(obj, &style);
     lv_obj_set_style_bg_color(obj, BG_BOARD_OBJ_COLOR_ON, 0);
@@ -119,7 +123,7 @@ void fg_switch_obj(uint8_t index)
 {
     int app_count = _lv_ll_get_len(&_app_ll);
     if (index > app_count) {
-        INTERFACE_TRACE("bg_board switch obj out of index");
+        INTERFACE_TRACE("fg_screen switch obj out of index");
         return;
     }
 
@@ -161,16 +165,13 @@ void fg_set_nav_bar_color(lv_color_t color)
     lv_obj_set_style_bg_color(_navigate_bar, color, 0);
 }
 
-void fg_change_state(int state)
+void fg_change_state(interface_state_t state)
 {
-    if (state == INTERFACE_STATE_ON) {
-        lv_obj_add_state(_app_area, INTERFACE_STATE_ON);
-        lv_obj_clear_state(_app_area, INTERFACE_STATE_OFF);
-    }
-    else {
-        lv_obj_add_state(_app_area, INTERFACE_STATE_OFF);
-        lv_obj_clear_state(_app_area, INTERFACE_STATE_ON);
-    }
+    // Main area
+    lv_obj_clear_state(_app_area, ~state);
+    lv_obj_add_state(_app_area, state);
+    // Right switch
+    fg_set_switch(state);
 }
 
 void fg_set_left_text(const char *text)
@@ -213,9 +214,9 @@ void fg_enabel_switch(void)
     lv_obj_clear_flag(_switch, LV_OBJ_FLAG_HIDDEN);
 }
 
-void fg_set_switch(bool flag)
+void fg_set_switch(interface_state_t state)
 {
-    if (flag) {
+    if (state == INTERFACE_STATE_ON) {
         lv_obj_add_state(_switch, LV_STATE_CHECKED);
     }
     else
@@ -224,6 +225,12 @@ void fg_set_switch(bool flag)
 
 static void left_area_event(lv_event_t *e)
 {
-    if (_left_area_event_callback)
-        _left_area_event_callback(e);
+    if (_left_area_event_cb)
+        _left_area_event_cb(e);
+}
+
+static void right_switch_event(lv_event_t *e)
+{
+    if (_right_sw_event_cb)
+        _right_sw_event_cb(e);
 }

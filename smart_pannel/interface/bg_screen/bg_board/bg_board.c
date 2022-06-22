@@ -1,4 +1,3 @@
-#include "interface/interface_conf.h"
 #include "utils/utils.h"
 #include "bg_board.h"
 
@@ -71,12 +70,13 @@ lv_obj_t *bg_board_regiser_obj(void)
     lv_obj_t *spot = lv_img_create(_spot_obj);
 	LV_IMG_DECLARE(img_spot);
     lv_img_set_src(spot, &img_spot);
-    lv_obj_set_style_img_recolor(spot, BG_SPOT_COLOR_1, 0);
-    lv_obj_set_style_img_recolor_opa(spot, LV_OPA_COVER, 0);
-    lv_obj_set_style_transform_zoom(spot, (int)(LV_IMG_ZOOM_NONE * BG_SPOT_ZOOM), 0);
-    lv_obj_set_style_img_recolor(spot, BG_SPOT_COLOR_2, LV_STATE_USER_1);
-    lv_obj_set_style_img_recolor_opa(spot, LV_OPA_COVER, LV_STATE_USER_1);
-    lv_obj_set_style_transform_zoom(spot, LV_IMG_ZOOM_NONE, LV_STATE_USER_1);
+    lv_obj_set_style_img_recolor(spot, BG_SPOT_COLOR_1, INTERFACE_STATE_OFF);
+    lv_obj_set_style_img_recolor_opa(spot, LV_OPA_COVER, INTERFACE_STATE_OFF);
+    lv_obj_set_style_transform_zoom(spot, (int)(LV_IMG_ZOOM_NONE * BG_SPOT_ZOOM), INTERFACE_STATE_OFF);
+    lv_obj_set_style_img_recolor(spot, BG_SPOT_COLOR_2, INTERFACE_STATE_ON);
+    lv_obj_set_style_img_recolor_opa(spot, LV_OPA_COVER, INTERFACE_STATE_ON);
+    lv_obj_set_style_transform_zoom(spot, LV_IMG_ZOOM_NONE, INTERFACE_STATE_ON);
+    lv_obj_add_state(spot, INTERFACE_STATE_OFF);
 
     app->obj = obj;
     app->spot = spot;
@@ -112,24 +112,20 @@ void bg_board_switch_obj(uint8_t index)
 
     if (app_last) {
         lv_obj_add_flag(app_last->obj, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_state(app_last->spot, LV_STATE_USER_1);
+        lv_obj_clear_state(app_last->spot, INTERFACE_STATE_ON);
+        lv_obj_add_state(app_last->spot, INTERFACE_STATE_OFF);
     }
     if (app_target) {
         lv_obj_clear_flag(app_target->obj, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_state(app_target->spot, LV_STATE_USER_1);
+        lv_obj_clear_state(app_target->spot, INTERFACE_STATE_OFF);
+        lv_obj_add_state(app_target->spot, INTERFACE_STATE_ON);
     }
 
     _app_index = index;
 }
 
-void bg_board_change_state(bg_board_state_t state)
+void bg_board_change_state(interface_state_t state)
 {
-    if (state == BG_BOARD_STATE_OFF) {
-        lv_obj_clear_state(_obj, INTERFACE_STATE_ON);
-        lv_obj_add_state(_obj, INTERFACE_STATE_OFF);
-    }
-    else {
-        lv_obj_clear_state(_obj, INTERFACE_STATE_OFF);
-        lv_obj_add_state(_obj, INTERFACE_STATE_ON);
-    }
+    lv_obj_clear_state(_obj, ~state);
+    lv_obj_add_state(_obj, state);
 }

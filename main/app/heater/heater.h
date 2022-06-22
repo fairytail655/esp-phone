@@ -1,11 +1,11 @@
-#ifndef HEATER_H
-#define HEATER_H
+#ifndef AIR_CONDITIONER_H
+#define AIR_CONDITIONER_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void heater_init(void);
+void air_conditioner_init(void);
 
 #ifdef __cplusplus
 }

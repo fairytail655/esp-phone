@@ -2,15 +2,16 @@
 #include "ui_air_conf.h"
 #include "ui_air_bg.h"
 
-static int *_indoor_temperature;
-static int *_target_temperature;
 static lv_obj_t *_label_indoor_temp, *_label_target_temp;
 static lv_obj_t *_label_indoor_symb, *_label_target_symb;
 static lv_obj_t *_btn_inc, *_btn_dec;
 static lv_obj_t *_label_inc, *_label_dec;
 static lv_timer_t *_timer_btn;
 static bool _inc_flag = true;
+static lv_event_cb_t _inc_event_cb, _dec_event_cb;
 
+static void target_temp_inc(void);
+static void target_temp_dec(void);
 static void inc_btn_event(lv_event_t *e);
 static void dec_btn_event(lv_event_t *e);
 static void timer_btn_callback(struct _lv_timer_t *timer);
@@ -44,7 +45,6 @@ void ui_air_bg_init(lv_obj_t *obj)
 
     _label_indoor_temp = lv_label_create(temp);
     lv_obj_set_style_text_font(_label_indoor_temp, BG_TEMP_FONT_L, 0);
-    // lv_label_set_text_fmt(_label_indoor_temp, "%-d", _indoor_temperature);
     lv_obj_center(_label_indoor_temp);
     lv_obj_set_style_text_color(_label_indoor_temp, BG_COLOR_L_2, INTERFACE_STATE_ON);
     lv_obj_set_style_text_color(_label_indoor_temp, BG_COLOR_D_2, INTERFACE_STATE_OFF);
@@ -71,7 +71,6 @@ void ui_air_bg_init(lv_obj_t *obj)
     lv_obj_set_style_border_width(_btn_inc, 2, 0);
     lv_obj_set_style_border_color(_btn_inc, lv_color_white(), 0);
     lv_obj_set_style_bg_color(_btn_inc, BG_TEMP_BTN_COLOR, 0);
-    // lv_obj_add_event_cb(_btn_inc, inc_btn_event, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(_btn_inc, inc_btn_event, LV_EVENT_PRESSED, NULL);
     lv_obj_add_event_cb(_btn_inc, inc_btn_event, LV_EVENT_RELEASED, NULL);
     _label_inc = lv_label_create(_btn_inc);
@@ -103,7 +102,6 @@ void ui_air_bg_init(lv_obj_t *obj)
     /* Target temperature label "23°C"   */
     _label_target_temp = lv_label_create(obj);
     lv_obj_set_style_text_font(_label_target_temp, BG_TEMP_FONT_S, 0);
-    // lv_label_set_text_fmt(_label_target_temp, "%-d", _target_temperature);
     lv_obj_align(_label_target_temp, LV_ALIGN_BOTTOM_MID, 0, -BG_TEMP_BTN_OFFSET);
     lv_obj_set_style_text_color(_label_target_temp, BG_COLOR_L_2, INTERFACE_STATE_ON);
     lv_obj_set_style_text_color(_label_target_temp, BG_COLOR_D_2, INTERFACE_STATE_OFF);
@@ -116,6 +114,12 @@ void ui_air_bg_init(lv_obj_t *obj)
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
     lv_obj_set_style_text_color(_label_target_symb, BG_COLOR_L_2, INTERFACE_STATE_ON);
     lv_obj_set_style_text_color(_label_target_symb, BG_COLOR_D_2, INTERFACE_STATE_OFF);
+}
+
+void ui_air_bg_register_cb(lv_event_cb_t inc, lv_event_cb_t dec)
+{
+    _inc_event_cb = inc;
+    _dec_event_cb = dec;
 }
 
 void ui_air_bg_change_state(smart_pannel_state_t state)
@@ -145,72 +149,42 @@ void ui_air_bg_change_state(smart_pannel_state_t state)
     lv_obj_add_state(_label_target_symb, state);
 }
 
-void ui_air_bg_indoor_temp_set(int *temp)
+void ui_air_bg_indoor_temp_set(int temp)
 {
-    if ((temp == NULL) ||
-        (*temp >= BG_TEMP_MAX) ||
-        (*temp <= BG_TEMP_MIN))
+    if ((temp >= TEMP_MAX) ||
+        (temp <= TEMP_MIN))
         return;
 
-    _indoor_temperature = temp;
-    lv_label_set_text_fmt(_label_indoor_temp, "%-d", *temp);
+    lv_label_set_text_fmt(_label_indoor_temp, "%-d", temp);
     int x_offset = lv_obj_get_width(_label_indoor_symb);
     lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_bg_indoor_temp_inc(void)
+void ui_air_bg_target_temp_set(int temp)
 {
-    if ( (_indoor_temperature == NULL) ||
-        (*_indoor_temperature >= BG_TEMP_MAX))
+    if ((temp >= TEMP_MAX) ||
+        (temp <= TEMP_MIN))
         return;
 
-    lv_label_set_text_fmt(_label_indoor_temp, "%-d", ++(*_indoor_temperature));
-    int x_offset = lv_obj_get_width(_label_indoor_symb);
-    lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
-}
-
-void ui_air_bg_indoor_temp_dec(void)
-{
-    if ((_indoor_temperature == NULL) ||
-        (*_indoor_temperature <= BG_TEMP_MIN))
-        return;
-
-    lv_label_set_text_fmt(_label_indoor_temp, "%-d", --(*_indoor_temperature));
-    int x_offset = lv_obj_get_width(_label_indoor_symb);
-    lv_obj_align_to(_label_indoor_symb, _label_indoor_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
-}
-
-void ui_air_bg_target_temp_set(int *temp)
-{
-    if ((temp == NULL) ||
-        (*temp >= BG_TEMP_MAX) ||
-        (*temp <= BG_TEMP_MIN))
-        return;
-
-    _target_temperature = temp;
-    lv_label_set_text_fmt(_label_target_temp, "%-d", *temp);
+    lv_label_set_text_fmt(_label_target_temp, "%-d", temp);
     int x_offset = lv_obj_get_width(_label_target_symb);
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_bg_target_temp_inc(void)
+static void target_temp_inc(void)
 {
-    if ((_target_temperature == NULL) ||
-        (*_target_temperature >= BG_TEMP_MAX))
-        return;
+    if (_inc_event_cb)
+        _inc_event_cb(NULL);
 
-    lv_label_set_text_fmt(_label_target_temp, "%-d", ++(*_target_temperature));
     int x_offset = lv_obj_get_width(_label_target_symb);
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
 
-void ui_air_bg_target_temp_dec(void)
+static void target_temp_dec(void)
 {
-    if ((_target_temperature == NULL) ||
-        (*_target_temperature <= BG_TEMP_MIN))
-        return;
+    if (_dec_event_cb)
+        _dec_event_cb(NULL);
 
-    lv_label_set_text_fmt(_label_target_temp, "%-d", --(*_target_temperature));
     int x_offset = lv_obj_get_width(_label_target_symb);
     lv_obj_align_to(_label_target_symb, _label_target_temp, LV_ALIGN_TOP_RIGHT, x_offset, 0);
 }
@@ -220,7 +194,7 @@ static void inc_btn_event(lv_event_t *e)
     switch (lv_event_get_code(e)) {
         case LV_EVENT_PRESSED:
             _inc_flag = true;
-            ui_air_bg_target_temp_inc();
+            target_temp_inc();
             lv_timer_reset(_timer_btn);
             lv_timer_resume(_timer_btn);
             break;
@@ -237,7 +211,7 @@ static void dec_btn_event(lv_event_t *e)
     switch (lv_event_get_code(e)) {
         case LV_EVENT_PRESSED:
             _inc_flag = false;
-            ui_air_bg_target_temp_dec();
+            target_temp_dec();
             lv_timer_reset(_timer_btn);
             lv_timer_resume(_timer_btn);
             break;
@@ -252,9 +226,9 @@ static void dec_btn_event(lv_event_t *e)
 static void timer_btn_callback(struct _lv_timer_t *timer)
 {
     if (_inc_flag) {
-        ui_air_bg_target_temp_inc();
+        target_temp_inc();
     }
     else {
-        ui_air_bg_target_temp_dec();
+        target_temp_dec();
     }
 }

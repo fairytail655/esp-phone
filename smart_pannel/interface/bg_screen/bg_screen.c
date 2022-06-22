@@ -1,15 +1,14 @@
 #include "utils/utils.h"
 #include "bg_screen.h"
 
-static interface_state_t _state;
 static lv_obj_t *_scr = NULL;
 
 static lv_obj_t *_label_switch;
 static lv_obj_t *_label_on, *_label_off;
 static lv_obj_t *_img_switch, *_img_more;
 
-static lv_event_cb_t _switch_callback = NULL;
-static lv_event_cb_t _more_callback = NULL;
+static lv_event_cb_t _switch_cb = NULL;
+static lv_event_cb_t _more_cb = NULL;
 
 static void img_switch_click_event(lv_event_t * e);
 static void img_more_click_event(lv_event_t * e);
@@ -126,8 +125,6 @@ void bg_change_state(interface_state_t state)
     lv_obj_add_state(_label_off, state);
     lv_obj_clear_state(_label_off, ~state);
     lv_obj_refresh_style(_label_switch, LV_PART_ANY, LV_STYLE_PROP_ANY);
-
-    _state = state;
 }
 
 void bg_show(void)
@@ -135,14 +132,14 @@ void bg_show(void)
     lv_scr_load(_scr);
 }
 
-void bg_register_callback_switch(lv_event_cb_t callback)
+void bg_register_cb_switch(lv_event_cb_t cb)
 {
-    _switch_callback  = callback;
+    _switch_cb  = cb;
 }
 
-void bg_register_callback_more(lv_event_cb_t callback)
+void bg_register_cb_more(lv_event_cb_t cb)
 {
-    _more_callback  = callback;
+    _more_cb  = cb;
 }
 
 void bg_show_label(bool en)
@@ -171,18 +168,12 @@ void bg_show_more(bool en)
 
 static void img_switch_click_event(lv_event_t * e)
 {
-    if (_state == INTERFACE_STATE_ON) {
-        bg_change_state(INTERFACE_STATE_OFF);
-    }
-    else {
-        bg_change_state(INTERFACE_STATE_ON);
-    }
-    if (_switch_callback)
-        _switch_callback(e);
+    if (_switch_cb)
+        _switch_cb(e);
 }
 
 static void img_more_click_event(lv_event_t * e)
 {
-    if (_more_callback)
-        _more_callback(e);
+    if (_more_cb)
+        _more_cb(e);
 }

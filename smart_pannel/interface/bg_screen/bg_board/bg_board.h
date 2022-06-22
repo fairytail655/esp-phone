@@ -2,6 +2,7 @@
 #define BG_BOARD_H
 
 #include "lvgl.h"
+#include "interface/interface_conf.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,7 +16,7 @@ typedef enum {
 lv_obj_t *bg_board_init(lv_obj_t *scr);
 lv_obj_t *bg_board_regiser_obj(void);
 void bg_board_switch_obj(uint8_t index);
-void bg_board_change_state(bg_board_state_t state);
+void bg_board_change_state(interface_state_t state);
 
 #ifdef __cplusplus
 }
