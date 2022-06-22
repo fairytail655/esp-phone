@@ -1,6 +1,6 @@
 #include "smart_pannel.h"
-#include "ui_air_conf.h"
-#include "ui_air_fg.h"
+#include "ui_heater_conf.h"
+#include "ui_heater_fg.h"
 
 static void mode_btns_init(lv_obj_t *obj);
 static void degree_btns_init(lv_obj_t *obj);
@@ -21,7 +21,7 @@ static lv_event_cb_t _inc_event_cb, _dec_event_cb;
 static lv_obj_t *_mode_btns[5];
 static lv_obj_t *_degree_btns[5];
 
-void ui_air_fg_init(lv_obj_t *obj)
+void ui_heater_fg_init(lv_obj_t *obj)
 {
     /* Temperature increase/decrease button */
     _btn_inc = lv_btn_create(obj);
@@ -81,13 +81,13 @@ void ui_air_fg_init(lv_obj_t *obj)
     degree_btns_init(obj);
 }
 
-void ui_air_fg_register_cb(lv_event_cb_t inc, lv_event_cb_t dec)
+void ui_heater_fg_register_cb(lv_event_cb_t inc, lv_event_cb_t dec)
 {
     _inc_event_cb = inc;
     _dec_event_cb = dec;
 }
 
-void ui_air_fg_change_state(smart_pannel_state_t state)
+void ui_heater_fg_change_state(smart_pannel_state_t state)
 {
     // Increase/decrease button
     lv_obj_clear_state(_label_inc, ~state);
@@ -109,7 +109,7 @@ void ui_air_fg_change_state(smart_pannel_state_t state)
     lv_obj_add_state(_label_target_symb, state);
 }
 
-void ui_air_fg_target_temp_set(int temp)
+void ui_heater_fg_target_temp_set(int temp)
 {
     if ((temp >= TEMP_MAX) ||
         (temp <= TEMP_MIN))

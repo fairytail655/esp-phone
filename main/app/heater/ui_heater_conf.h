@@ -1,5 +1,5 @@
-#ifndef UI_AIR_CONF_H
-#define UI_AIR_CONF_H
+#ifndef ui_heater_CONF_H
+#define ui_heater_CONF_H
 
 #include "lvgl.h"
 
@@ -9,6 +9,10 @@ extern "C" {
 
 LV_FONT_DECLARE(my_font_bold_100);
 LV_FONT_DECLARE(my_font_bold_60);
+LV_IMG_DECLARE(img_fire_on);
+LV_IMG_DECLARE(img_fire_off);
+LV_IMG_DECLARE(img_rest_on);
+LV_IMG_DECLARE(img_rest_off);
 
 #define TEMP_MAX                    100
 #define TEMP_MIN                    -100
@@ -24,12 +28,17 @@ LV_FONT_DECLARE(my_font_bold_60);
 #define BG_TEMP_FONT_S              &my_font_bold_60
 #define BG_TEMP_SYMB_L              &lv_font_montserrat_24
 #define BG_TEMP_SYMB_S              &lv_font_montserrat_20
-#define BG_TEMP_BTN_W               100
-#define BG_TEMP_BTN_H               60
-#define BG_TEMP_BTN_OFFSET          20
-#define BG_TEMP_BTN_RADIUS          10
-#define BG_TEMP_BTN_COLOR           lv_color_hex(0xecf4fc)
-#define BG_TEMP_BTN_PERIOD          1000
+#define BG_CONT_WIDTH               400
+#define BG_CONT_HEIGHT              70
+#define BG_CONT_OFFSET              40
+#define BG_CONT_PAD                 20
+#define BG_BTN_RADIUS               15
+#define BG_BTN_OPA                  LV_OPA_40
+#define BG_BTN_COLOR                lv_color_hex(0xa4b0be)
+#define BG_BTN_FONT                 &lv_font_montserrat_18
+#define BG_BTN_FONT_COLOR_ON        lv_color_black()
+#define BG_BTN_FONT_COLOR_OFF       lv_color_hex(0x7e7e7e)
+#define BG_BTN_IMG_OFFSET           20
 
 /* Foreground Screen */
 // Target Temp
