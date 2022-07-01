@@ -12,13 +12,20 @@ static void bg_more_click_event(lv_event_t *e);
 static void fg_back_click_event(lv_event_t *e);
 static void fg_switch_click_event(lv_event_t *e);
 static void motion_detect_event(lv_event_t *e);
+static void move_animation_event_cb(struct _lv_anim_t *a);
+static void bottom_press_event_cb(lv_event_t *e);
+static void bottom_pressing_event_cb(lv_event_t *e);
+static void bottom_click_event_cb(lv_event_t *e);
 
 static lv_ll_t _app_list;
 static int _active_app_index = 1;
 static app_t **_active_app_node;
 static lv_event_code_t _motion_detect_event_id;
 static lv_obj_t *_motion_detect_event_obj;
+static smart_pannel_touch_pos_t _touch_pos = NULL;
 static bool _bg_screen_active_flag = true;
+static int touch_x_last, touch_y_last, touch_y_origin;
+static bool hide_flag = false;
 
 void smart_pannel_init(void)
 {
@@ -31,8 +38,6 @@ void smart_pannel_init(void)
     fg_init();
     fg_register_cb_back(fg_back_click_event, fg_switch_click_event);
 
-    _lv_ll_init(&_app_list, sizeof(app_t *));
-
     /* Motion Detect */
     _motion_detect_event_id = lv_event_register_id();
     _motion_detect_event_obj = lv_layer_top();
@@ -40,6 +45,22 @@ void smart_pannel_init(void)
     lv_obj_add_event_cb(
         _motion_detect_event_obj, motion_detect_event, _motion_detect_event_id, NULL
     );
+
+    /* Menu Bar */
+    menu_init(lv_layer_top());
+    lv_obj_add_event_cb(
+        lv_layer_top(), bottom_press_event_cb, menu_bar_get_event_id_press(), NULL
+    );
+    lv_obj_add_event_cb(
+        lv_layer_top(), bottom_pressing_event_cb, menu_bar_get_event_id_pressing(), NULL
+    );
+    lv_obj_add_event_cb(
+        lv_layer_top(), bottom_click_event_cb, menu_bar_get_event_id_click(), NULL
+    );
+    menu_bar_set_anim_cb((void *)move_animation_event_cb);
+
+    _lv_ll_init(&_app_list, sizeof(app_t *));
+
 }
 
 void smart_pannel_install_app(app_t *app)
@@ -79,6 +100,7 @@ void smart_pannel_swtich_to_fg(void)
 
 void smart_pannel_register_touch_pos(smart_pannel_touch_pos_t touch_pos)
 {
+    _touch_pos = touch_pos;
     motion_detect_register_touch_pos(touch_pos);
 }
 
@@ -293,5 +315,87 @@ static void motion_detect_event(lv_event_t *e)
             break;
         default:
             break;
+    }
+}
+
+static void move_animation_event_cb(struct _lv_anim_t *a)
+{
+    if (hide_flag) {
+        hide_flag = false;
+        // gui.menubar.hide();
+        menu_bar_show(false);
+    }
+}
+
+static void bottom_press_event_cb(lv_event_t *e)
+{
+    if (_touch_pos) {
+        _touch_pos(&touch_x_last, &touch_y_last);
+        touch_y_origin = touch_y_last;
+    }
+    // gui.menubar.show();
+    menu_bar_show(true);
+}
+
+static void bottom_pressing_event_cb(lv_event_t *e)
+{
+    int touch_x, touch_y, touch_y_distance;
+    int menubar_y, menubar_y_next;
+
+    if (_touch_pos) {
+        _touch_pos(&touch_x, &touch_y);
+        touch_y_distance = touch_y - touch_y_last;
+        menubar_y = menu_bar_current_y();
+        menubar_y_next = menubar_y + touch_y_distance;
+        if (((touch_y_distance > 0) && (menubar_y < 0)) ||
+            ((touch_y_distance < 0) && (menubar_y > menu_bar_origin_y()))) {
+            if (menubar_y_next > 0) {
+                // gui.menubar.moveY(0);
+                menu_bar_move_y(0);
+            }
+            else if (menubar_y_next < menu_bar_origin_y()) {
+                // gui.menubar.moveY(gui.menubar.originY());
+                menu_bar_move_y(menu_bar_origin_y());
+            }
+            else {
+                // gui.menubar.moveY(menubar_y_next);
+                menu_bar_move_y(menubar_y_next);
+            }
+        }
+        touch_y_last = touch_y;
+    }
+}
+
+static void bottom_click_event_cb(lv_event_t *e)
+{
+    int distance;
+
+    if (_touch_pos) {
+        _touch_pos(&touch_x_last, &touch_y_last);
+        distance = touch_y_last - touch_y_origin;
+        if (distance < 0) {
+            if (distance < -(MENU_BAR_HEIGHT / 4)) {
+                // gui.menubar.startMoveAnim(gui.menubar.originY());
+                menu_bar_start_anim(menu_bar_origin_y());
+                hide_flag = true;
+            }
+            else {
+                // gui.menubar.startMoveAnim(0);
+                menu_bar_start_anim(0);
+                hide_flag = false;
+            }
+        }
+        else {
+            if (distance > (MENU_BAR_HEIGHT / 4)) {
+                // gui.menubar.startMoveAnim(0);
+                menu_bar_start_anim(0);
+                hide_flag = false;
+            }
+            else {
+                // gui.menubar.startMoveAnim(gui.menubar.originY());
+                menu_bar_start_anim(menu_bar_origin_y());
+                hide_flag = true;
+            }
+        }
     }
 }
