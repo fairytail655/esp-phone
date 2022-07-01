@@ -29,7 +29,7 @@ CFLAGS 				:= -O0 -g $(WARNINGS)
 DEFINES				:= -D SIMULATOR=1 -D LV_BUILD_TEST=0
 
 # Include simulator inc folder first so lv_conf.h from custom UI can be used instead
-INC 				:= -I./ -I./lvgl/ -I./lvgl_phone
+INC 				:= -I./ -I./lvgl/ -I./lv_demos
 LDLIBS	 			:= -lSDL2 -lm
 BIN 				:= $(BIN_DIR)/demo
 

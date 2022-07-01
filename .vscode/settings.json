@@ -5,6 +5,7 @@
 		"wallpaper.h": "c",
 		"gui.h": "c",
 		"status_bar.h": "c",
-		"status_icon.h": "c"
+		"status_icon.h": "c",
+		"lv_demo.h": "c"
 	}
 }
