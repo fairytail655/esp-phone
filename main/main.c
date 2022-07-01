@@ -11,8 +11,18 @@
 #include "lv_drivers/indev/mousewheel.h"
 #include "lv_demo.h"
 
+#include <stdio.h>
+#include <sys/time.h>
+#include <pthread.h>
+
+#define TEST_SAMPLE_PERIOD      50
+#define TEST_SAMPLE_TIME        20000
+
+static void thread_lvgl_test(void);
 static void hal_init(void);
 static int tick_thread(void *data);
+
+static long sum_time = 0;
 
 int main(int argc, char **argv)
 {
@@ -27,12 +37,42 @@ int main(int argc, char **argv)
 
     lv_demo_music();
 
+    static pthread_t lvgl_test;
+
+    int ret = pthread_create(&lvgl_test, NULL, (void *)thread_lvgl_test, NULL);
+    if (ret != 0) {
+        printf("Thread lvgl_test create error");
+        return -1;
+    }
+
     while(1) {
-        lv_timer_handler();
         usleep(5 * 1000);
+
+        struct timeval start_time;
+        gettimeofday(&start_time, 0);
+
+        lv_timer_handler();
+
+        struct timeval end_time;
+        gettimeofday(&end_time, 0);
+        sum_time  = 1000000 * (end_time.tv_sec - start_time.tv_sec) + end_time.tv_usec - start_time.tv_usec;
     }
 
     return 0;
+}
+
+static void thread_lvgl_test(void)
+{
+    printf("app_main: thread begin\n");
+    printf("app_main: ----- Data -----\n");
+    long i = 0;
+    while (i < (TEST_SAMPLE_TIME / TEST_SAMPLE_PERIOD)) {
+        printf("app_main: %ld\n", sum_time);
+        i++;
+        usleep(TEST_SAMPLE_PERIOD * 1000);
+    }
+    printf("app_main: ----- Data -----\n");
+    printf("app_main: thread end\n");
 }
 
 /**
